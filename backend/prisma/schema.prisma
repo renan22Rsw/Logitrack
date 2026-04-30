@@ -16,11 +16,12 @@ model User {
   email     String   @unique
   name      String?
   role      Role     @default(OPERATOR)
-  password  String?
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  movements StockMovement[]
+  movements     StockMovement[]
+  refreshTokens RefreshToken[]
 
   @@map("users")
 }
@@ -53,13 +54,27 @@ model StockMovement {
   quantity  Int
   type      MovementType
   reason    String?
+  reference String?
   createdAt DateTime     @default(now())
 
   product Product @relation(fields: [productId], references: [id])
   user    User    @relation(fields: [userId], references: [id])
 
   @@index([productId])
+  @@index([userId])
   @@map("stock_movements")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }
 
 enum MovementType {
