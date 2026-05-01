@@ -1,4 +1,3 @@
-import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { DatabaseService as PrismaService } from '../database/database.service';
@@ -10,13 +9,12 @@ import { JwtPayload } from '@/types/jwt-payload';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UsersService,
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
   ) {}
 
   async validateUser(email: string, pass: string) {
-    const user = await this.userService.getUniqueUser(email);
+    const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
