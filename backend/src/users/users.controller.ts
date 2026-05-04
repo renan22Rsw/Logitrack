@@ -3,10 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Patch,
   Post,
-  Query,
+  Request,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -15,18 +14,18 @@ import { UsersService } from './users.service';
 import { User } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import type { FastifyRequest } from 'fastify';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get('me')
   @UseGuards(JwtAuthGuard)
-  // it will be an @UseRole decorator soon
-  async getUsers(
-    @Query('search') search?: string,
-  ): Promise<Omit<User, 'password'>[]> {
-    return this.usersService.getUsers(search);
+  async getUniqueUser(
+    @Request() req: FastifyRequest,
+  ): Promise<Omit<User, 'password'> | null> {
+    return this.usersService.getUniqueUser(req.user.sub);
   }
 
   @Post()
@@ -36,20 +35,20 @@ export class UsersController {
     return this.usersService.createUser(user);
   }
 
-  @Patch(':id')
+  @Patch('me')
   @UseGuards(JwtAuthGuard)
-  // it will be an @UseRole decorator soon
   async updateUser(
     @Body(new ValidationPipe()) user: UpdateUserDto,
-    @Param('id') id: string,
+    @Request() req: FastifyRequest,
   ): Promise<Omit<User, 'password'>> {
-    return this.usersService.updateUser(user, id);
+    return this.usersService.updateUser(user, req.user.sub);
   }
 
-  @Delete(':id')
+  @Delete('me')
   @UseGuards(JwtAuthGuard)
-  // it will be an @UseRole decorator soon
-  async deleteUser(@Param('id') id: string): Promise<Omit<User, 'password'>> {
-    return this.usersService.deleteUser(id);
+  async deleteUser(
+    @Request() req: FastifyRequest,
+  ): Promise<Omit<User, 'password'>> {
+    return this.usersService.deleteUser(req.user.sub);
   }
 }

@@ -16,8 +16,8 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body('refresh_token') req: FastifyRequest) {
-    return this.authService.refresh(req.user.id);
+  async refresh(@Body('refresh_token') refreshToken: string) {
+    return this.authService.refresh(refreshToken);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -48,6 +48,21 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
+  async getUniqueUser(id: string): Promise<Omit<User, 'password'> | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
   async createUser(data: CreateUserDto): Promise<Omit<User, 'password'>> {
     const { name, email, password } = data;
 
