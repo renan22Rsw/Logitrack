@@ -1,7 +1,9 @@
+import { DashboardHeader } from "../_components/header";
+
 const DashBoard = () => {
   return (
     <>
-      <h1>Dashboard</h1>
+      <DashboardHeader />
     </>
   );
 };
