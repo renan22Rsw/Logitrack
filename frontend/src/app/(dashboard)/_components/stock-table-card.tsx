@@ -1,5 +1,11 @@
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -9,6 +15,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export const StockTableCard = () => {
   const products = [
@@ -53,7 +61,7 @@ export const StockTableCard = () => {
       <CardHeader>
         <CardTitle>Produto em Estoque</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="py-6">
         <Table>
           <TableHeader className="rounded-2xl bg-[#F8F9F9]">
             <TableRow>
@@ -87,6 +95,14 @@ export const StockTableCard = () => {
           </TableBody>
         </Table>
       </CardContent>
+
+      <CardFooter className="flex h-full items-end border-none bg-white">
+        <Link href={"#"}>
+          <div className="flex items-center font-semibold text-blue-500">
+            Ver todos os produtos <ArrowRight size={16} className="mt-1 ml-2" />
+          </div>
+        </Link>
+      </CardFooter>
     </Card>
   );
 };
