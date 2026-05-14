@@ -39,7 +39,7 @@ export const DonutChartCard = () => {
   }, []);
 
   return (
-    <Card className="flex flex-col xl:max-w-100">
+    <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Movimentações por Tipo</CardTitle>
       </CardHeader>
