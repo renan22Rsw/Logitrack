@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus } from "lucide-react";
+import { ProductCards } from "./cards";
 
 export const ProductsHeader = () => {
   return (
@@ -28,6 +29,10 @@ export const ProductsHeader = () => {
             Novo Produto
           </Button>
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 py-6 xl:grid-cols-4">
+        <ProductCards />
       </div>
     </header>
   );
