@@ -61,7 +61,7 @@ export const stockMovementsCards: ProductCardsTypes[] = [
   },
 
   {
-    title: "Total de Entradas",
+    title: "Total de Saídas",
     value: 1089,
     description: `+18 vs mes anterior`,
     arrowUp: <ArrowUp size={16} />,
