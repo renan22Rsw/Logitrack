@@ -9,6 +9,7 @@ export const ProductsHeader = ({
   description,
   hasButton,
   data,
+  placeholder,
 }: ProductHeaderTypes) => {
   return (
     <header className="px-6 py-8">
@@ -22,7 +23,7 @@ export const ProductsHeader = ({
           <Search className="text-muted-foreground absolute top-2.5 left-3 size-4" />
 
           <Input
-            placeholder="Buscar produto ou SKU..."
+            placeholder={placeholder}
             className="max-w-80 rounded-lg py-4.5 pl-10 placeholder:text-xs"
           />
 
