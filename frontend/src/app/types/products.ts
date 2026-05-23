@@ -6,13 +6,14 @@ export type ProductHeaderTypes = {
   description: string;
   hasButton: boolean;
   data: ProductCardsTypes[];
+  placeholder?: string;
 };
 
 export type ProductCardsTypes = {
   title: string;
   value: number;
   description: string;
-  arrowUp?: JSX.Element;
+  arrowUp?: JSX.Element | null;
   icon: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
