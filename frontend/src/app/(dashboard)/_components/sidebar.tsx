@@ -26,23 +26,28 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Link from "next/link";
 
 const mainNavItems = [
   {
     title: "Dashboard",
     icon: LayoutDashboard,
+    href: "/dashboard",
   },
   {
     title: "Produtos",
     icon: Package,
+    href: "/products",
   },
   {
     title: "Movimentações",
     icon: ArrowLeftRight,
+    href: "/stock-movements",
   },
   {
     title: "Relatórios",
     icon: FileText,
+    href: "/reports",
   },
 ];
 
@@ -50,10 +55,12 @@ const adminNavItems = [
   {
     title: "Usuários",
     icon: Users,
+    href: "/users",
   },
   {
     title: "Perfil",
     icon: User,
+    href: "/profile",
   },
 ];
 
@@ -97,7 +104,9 @@ export const AppSidebar = () => {
                     tooltip={item.title}
                   >
                     <item.icon className="size-5" />
-                    <span>{item.title}</span>
+                    <Link href={item.href}>
+                      <span>{item.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -118,7 +127,9 @@ export const AppSidebar = () => {
                     tooltip={item.title}
                   >
                     <item.icon className="size-5" />
-                    <span>{item.title}</span>
+                    <Link href={item.href}>
+                      <span>{item.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
