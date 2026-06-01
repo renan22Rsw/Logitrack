@@ -10,6 +10,7 @@ const StockMovements = () => {
         description="Acompanhe todas as entradas e saídas de produtos do estoque"
         hasButton={false}
         data={stockMovementsCards}
+        placeholder="Busque por movimentações"
       />
       <StockMovementsMain />
     </>

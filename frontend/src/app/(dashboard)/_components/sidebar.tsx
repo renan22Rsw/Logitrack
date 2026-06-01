@@ -10,6 +10,7 @@ import {
   LogOut,
   ChevronRight,
   Box,
+  ClipboardList,
 } from "lucide-react";
 
 import {
@@ -61,6 +62,12 @@ const adminNavItems = [
     title: "Perfil",
     icon: User,
     href: "/profile",
+  },
+
+  {
+    title: "Audit log",
+    icon: ClipboardList,
+    href: "/audit-log",
   },
 ];
 
