@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { ProductPagination } from "./pagination";
+import { DeleteProductButton } from "./delete-button";
+import { EditProductButton } from "./edit-product-button";
 
 export const ProductTable = () => {
   const products = [
@@ -106,6 +108,7 @@ export const ProductTable = () => {
               <TableHead>Preço</TableHead>
               <TableHead>Estoque atual</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -127,6 +130,11 @@ export const ProductTable = () => {
                   >
                     {product.status}
                   </Badge>
+                </TableCell>
+
+                <TableCell className="flex items-center gap-4">
+                  <EditProductButton />
+                  <DeleteProductButton />
                 </TableCell>
               </TableRow>
             ))}
