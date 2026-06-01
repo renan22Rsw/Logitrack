@@ -5,7 +5,7 @@ export const profileSchema = v.object({
   email: v.pipe(
     v.string(),
     v.nonEmpty("O email é obrigatório"),
-    v.email(),
+    v.email("email invalido"),
     v.maxLength(30, "O email deve ter no máximo 30 caracteres"),
   ),
 

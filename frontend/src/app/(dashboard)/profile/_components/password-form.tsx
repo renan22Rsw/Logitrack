@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -133,7 +134,10 @@ export const PasswordForm = () => {
                 </FormischField>
               </FieldGroup>
 
-              <DialogFooter>
+              <DialogFooter className="border-none bg-white">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancelar</Button>
+                </DialogClose>
                 <Button type="submit">Salvar Alterações</Button>
               </DialogFooter>
             </Form>
