@@ -11,6 +11,7 @@ const Products = () => {
         description="Gerencie os produtos do estoque"
         hasButton
         data={productCards}
+        placeholder="Buscar Produtos"
       />
       <ProductContainer>
         <ProductMain />
