@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 
 import { ProductPagination } from "../../products/_components/pagination";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2 } from "lucide-react";
+import { DeleteUserButton } from "./delete-button";
+import { EditUserButton } from "./edit-button";
 
 export const UsersTable = () => {
   const users = [
@@ -162,8 +163,8 @@ export const UsersTable = () => {
                 </TableCell>
 
                 <TableCell className="flex items-center gap-4">
-                  <Pencil className="h-4 w-4" />
-                  <Trash2 className="h-4 w-4" color="red" />
+                  <EditUserButton />
+                  <DeleteUserButton />
                 </TableCell>
               </TableRow>
             ))}
