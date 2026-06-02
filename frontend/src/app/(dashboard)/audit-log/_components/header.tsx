@@ -21,7 +21,7 @@ export const AuditLogHeader = () => {
           <CardHeader className="grid grid-cols-2 items-center gap-4 xl:flex">
             <div className="col-span-2">
               <Input
-                placeholder="Buscar por usuário, ação ou entidade"
+                placeholder="Buscar por usuário"
                 className="placeholder:text-xs xl:max-w-80"
               />
             </div>
