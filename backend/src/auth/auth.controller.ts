@@ -23,6 +23,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Request() req: FastifyRequest) {
-    return this.authService.logout(req.user.id);
+    return this.authService.logout(req.user.id, req.user);
   }
 }

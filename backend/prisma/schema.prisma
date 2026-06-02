@@ -21,6 +21,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   movements     StockMovement[]
+  auditLogs     AuditLog[]
   refreshTokens RefreshToken[]
 
   @@map("users")
@@ -33,15 +34,15 @@ enum Role {
 }
 
 model Product {
-  id           String   @id @default(uuid())
-  sku          String   @unique
+  id           String    @id @default(uuid())
+  sku          String    @unique
   name         String
   description  String?
-  price        Decimal  @db.Decimal(10, 2)
-  currentStock Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  deletedAt    DateTime?     
+  price        Decimal   @db.Decimal(10, 2)
+  currentStock Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
   movements StockMovement[]
 
@@ -78,7 +79,42 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
+model AuditLog {
+  id String @id @default(cuid())
+  action AuditAction
+  entity AuditEntity
+  entityId String
+  description String?
+  userId String
+  
+  user   User   @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([entity])
+}
+
 enum MovementType {
   IN
   OUT
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+
+  LOGIN
+  LOGOUT
+
+  STOCK_IN
+  STOCK_OUT
+}
+
+enum AuditEntity {
+  USER
+  PRODUCT
+  MOVEMENT
+  AUTH
 }

@@ -6,6 +6,8 @@ import bcrypt from 'bcrypt';
 import { User } from '@/types/user';
 import { JwtPayload } from '@/types/jwt-payload';
 
+import { AuditAction, AuditEntity } from '@prisma/client';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -42,12 +44,24 @@ export class AuthService {
       expiresIn: '7d',
     });
 
-    await this.prisma.refreshToken.create({
-      data: {
-        userId: user.id,
-        token: refresh_token,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.refreshToken.create({
+        data: {
+          userId: user.id,
+          token: refresh_token,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: user.id,
+          action: AuditAction.LOGIN,
+          entity: AuditEntity.AUTH,
+          entityId: user.id,
+          description: 'O usuário entrou no sistema',
+        },
+      });
     });
 
     return {
@@ -83,9 +97,21 @@ export class AuthService {
     return { acess_token: newAcessToken };
   }
 
-  async logout(token: string) {
-    await this.prisma.refreshToken.deleteMany({
-      where: { token: token },
+  async logout(token: string, user: JwtPayload) {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.refreshToken.deleteMany({
+        where: { token: token },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: user.sub,
+          action: AuditAction.LOGOUT,
+          entity: AuditEntity.AUTH,
+          entityId: user.sub,
+          description: 'O usuário saiu do sistema',
+        },
+      });
     });
 
     return { message: 'logged out' };
