@@ -6,7 +6,7 @@ import {
 import { DatabaseService as PrismaService } from '../database/database.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
+import { User, AuditAction, AuditEntity } from '@prisma/client';
 
 import bcrypt from 'bcrypt';
 
@@ -45,7 +45,16 @@ export class UsersService {
       });
     }
 
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
   async getUniqueUser(id: string): Promise<Omit<User, 'password'> | null> {
@@ -72,21 +81,34 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return this.prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
+    return await this.prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
 
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      await tx.auditLog.create({
+        data: {
+          userId: newUser.id,
+          action: AuditAction.CREATE,
+          entity: AuditEntity.USER,
+          entityId: newUser.id,
+          description: `Usuário ${newUser.name} foi criado`,
+        },
+      });
+
+      return newUser;
     });
   }
 
@@ -98,26 +120,49 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('User not found');
 
+    const existingEmail = await this.prisma.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (existingEmail && existingEmail.id !== id) {
+      throw new BadRequestException('Email já em uso');
+    }
     const updateData = { ...data };
 
     if (data.password) {
       updateData.password = await bcrypt.hash(data.password, 10);
     }
 
-    return this.prisma.user.update({
-      where: { id },
-      data: {
-        ...updateData,
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const updatedUser = await tx.user.update({
+        where: { id },
+        data: {
+          ...updateData,
+        },
 
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: updatedUser.id,
+          action: AuditAction.UPDATE,
+          entity: AuditEntity.USER,
+          entityId: updatedUser.id,
+          description: 'Usuário atualizou seu perfil',
+        },
+      });
+
+      return updatedUser;
     });
   }
 
@@ -125,6 +170,16 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) throw new NotFoundException('User not found');
+
+    await this.prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: AuditAction.DELETE,
+        entity: AuditEntity.USER,
+        entityId: user.id,
+        description: `Usuário ${user.name} deletou seu perfil`,
+      },
+    });
 
     return this.prisma.user.delete({
       where: { id },
