@@ -29,11 +29,25 @@ export class AuthService {
     return result;
   }
 
-  async login(user: User) {
+  async login(data: User) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Usuário não existe');
+    }
+
+    if (user.deletedAt) {
+      throw new UnauthorizedException('Conta do usuário está inativa');
+    }
+
     const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
+      sub: data.id,
+      email: data.email,
+      role: data.role,
     };
 
     const acess_token = this.jwtService.sign(payload, {
@@ -47,7 +61,7 @@ export class AuthService {
     await this.prisma.$transaction(async (tx) => {
       await tx.refreshToken.create({
         data: {
-          userId: user.id,
+          userId: data.id,
           token: refresh_token,
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
@@ -55,10 +69,10 @@ export class AuthService {
 
       await tx.auditLog.create({
         data: {
-          userId: user.id,
+          userId: data.id,
           action: AuditAction.LOGIN,
           entity: AuditEntity.AUTH,
-          entityId: user.id,
+          entityId: data.id,
           description: 'O usuário entrou no sistema',
         },
       });

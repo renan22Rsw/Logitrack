@@ -41,6 +41,7 @@ export class UsersService {
           role: true,
           createdAt: true,
           updatedAt: true,
+          deletedAt: true,
         },
       });
     }
@@ -53,6 +54,7 @@ export class UsersService {
         role: true,
         createdAt: true,
         updatedAt: true,
+        deletedAt: true,
       },
     });
   }
@@ -68,6 +70,7 @@ export class UsersService {
         role: true,
         createdAt: true,
         updatedAt: true,
+        deletedAt: true,
       },
     });
   }
@@ -95,6 +98,7 @@ export class UsersService {
           role: true,
           createdAt: true,
           updatedAt: true,
+          deletedAt: true,
         },
       });
 
@@ -149,6 +153,7 @@ export class UsersService {
           role: true,
           createdAt: true,
           updatedAt: true,
+          deletedAt: true,
         },
       });
 
@@ -181,15 +186,10 @@ export class UsersService {
       },
     });
 
-    return this.prisma.user.delete({
+    return this.prisma.user.update({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
+      data: {
+        deletedAt: new Date(),
       },
     });
   }
