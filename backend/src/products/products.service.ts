@@ -7,7 +7,14 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { DatabaseService as PrismaService } from '../database/database.service';
-import { Role, MovementType, Prisma, Product } from '@prisma/client';
+import {
+  Role,
+  MovementType,
+  Prisma,
+  Product,
+  AuditAction,
+  AuditEntity,
+} from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
@@ -41,14 +48,34 @@ export class ProductsService {
         },
       });
 
+      await tx.auditLog.create({
+        data: {
+          userId,
+          action: AuditAction.CREATE,
+          entity: AuditEntity.PRODUCT,
+          entityId: product.id,
+          description: `Produto ${product.name} foi criado`,
+        },
+      });
+
       if (createProductDto.initialStock && createProductDto.initialStock > 0) {
-        await tx.stockMovement.create({
+        const movement = await tx.stockMovement.create({
           data: {
             productId: product.id,
             userId,
             quantity: createProductDto.initialStock,
             type: MovementType.IN,
             reason: 'Initial stock',
+          },
+        });
+
+        await tx.auditLog.create({
+          data: {
+            userId,
+            action: AuditAction.STOCK_IN,
+            entity: AuditEntity.MOVEMENT,
+            entityId: movement.id,
+            description: `Entrada de ${createProductDto.initialStock} do produto ${product.name} no estoque`,
           },
         });
 
@@ -95,42 +122,63 @@ export class ProductsService {
   async updateProduct(
     id: string,
     updateProductDto: UpdateProductDto,
+    userId: string,
     userRole: Role,
   ): Promise<Product> {
     if (userRole === Role.OPERATOR) {
       throw new ForbiddenException('Operator cannot update a product');
     }
 
-    const product = await this.prisma.product.findUnique({ where: { id } });
+    const existingProduct = await this.prisma.product.findUnique({
+      where: { id },
+    });
 
-    if (!product) throw new NotFoundException('Product not found');
+    if (!existingProduct) throw new NotFoundException('Product not found');
 
     if (updateProductDto.sku) {
-      const existingProduct = await this.prisma.product.findUnique({
+      const existingSku = await this.prisma.product.findUnique({
         where: { sku: updateProductDto.sku },
       });
 
-      if (existingProduct) {
+      if (existingSku && existingSku.id !== id) {
         throw new BadRequestException('SKU already in use');
       }
     }
 
-    return this.prisma.product.update({
-      where: { id },
-      data: {
-        ...(updateProductDto.name && { name: updateProductDto.name }),
-        ...(updateProductDto.sku && { sku: updateProductDto.sku }),
-        ...(updateProductDto.description && {
-          description: updateProductDto.description,
-        }),
-        ...(updateProductDto.price && {
-          price: new Prisma.Decimal(updateProductDto.price),
-        }),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const product = await tx.product.update({
+        where: { id },
+        data: {
+          ...(updateProductDto.name && { name: updateProductDto.name }),
+          ...(updateProductDto.sku && { sku: updateProductDto.sku }),
+          ...(updateProductDto.description && {
+            description: updateProductDto.description,
+          }),
+          ...(updateProductDto.price && {
+            price: new Prisma.Decimal(updateProductDto.price),
+          }),
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId,
+          action: AuditAction.UPDATE,
+          entity: AuditEntity.PRODUCT,
+          entityId: product.id,
+          description: `Produto ${product.name} foi atualizado`,
+        },
+      });
+
+      return product;
     });
   }
 
-  async removeProduct(id: string, userRole: Role): Promise<Product> {
+  async removeProduct(
+    id: string,
+    userId: string,
+    userRole: Role,
+  ): Promise<Product> {
     if (userRole === Role.OPERATOR) {
       throw new ForbiddenException('Operator cannot delete a product');
     }
@@ -143,11 +191,25 @@ export class ProductsService {
       throw new BadRequestException('Product already deleted');
     }
 
-    return this.prisma.product.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const product = await tx.product.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId,
+          action: AuditAction.DELETE,
+          entity: AuditEntity.PRODUCT,
+          entityId: product.id,
+          description: `Produto ${product.name} foi excluído`,
+        },
+      });
+
+      return product;
     });
   }
 }

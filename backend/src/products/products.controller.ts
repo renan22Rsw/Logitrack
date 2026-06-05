@@ -61,6 +61,7 @@ export class ProductsController {
     return this.productsService.updateProduct(
       id,
       updateProductDto,
+      req.user.sub,
       req.user.role as Role,
     );
   }
@@ -72,6 +73,10 @@ export class ProductsController {
     @Param('id') id: string,
     @Request() req: FastifyRequest,
   ): Promise<Product> {
-    return this.productsService.removeProduct(id, req.user.role as Role);
+    return this.productsService.removeProduct(
+      id,
+      req.user.sub,
+      req.user.role as Role,
+    );
   }
 }
