@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const mainNavItems = [
   {
@@ -72,6 +73,17 @@ const adminNavItems = [
 ];
 
 export const AppSidebar = () => {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    router.push("/sign-in");
+  };
+
   return (
     <Sidebar className="border-r-0">
       <SidebarHeader className="p-4 pb-2">
@@ -167,7 +179,10 @@ export const AppSidebar = () => {
         <SidebarSeparator className="my-2" />
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground gap-3 px-3 py-2">
+            <SidebarMenuButton
+              className="text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground gap-3 px-3 py-2"
+              onClick={handleLogout}
+            >
               <LogOut className="size-5" />
               <span>Sair</span>
             </SidebarMenuButton>
