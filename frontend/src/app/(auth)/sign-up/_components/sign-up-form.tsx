@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -15,10 +16,13 @@ import {
   Form,
   Field as FormischField,
 } from "@formisch/react";
-
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export const SignUpForm = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
+
   const form = useForm({
     schema: SignUpSchema,
     initialInput: {
@@ -29,9 +33,32 @@ export const SignUpForm = () => {
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof SignUpSchema> = (output) => {
-    // Do something with the validated form values.
-    console.log(output);
+  const handleSubmit: SubmitHandler<typeof SignUpSchema> = async (output) => {
+    setServerError(null);
+
+    try {
+      const { name, email, password } = output;
+
+      const response = await fetch("api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setServerError(data?.message ?? "Ocorreu um erro. Tente novamente.");
+      }
+
+      router.push("/sign-in");
+    } catch (err) {
+      setServerError("Não foi possível conectar ao servidor. Tente novamente.");
+      console.error(err);
+    }
   };
 
   return (
@@ -71,7 +98,7 @@ export const SignUpForm = () => {
           {(field) => (
             <Field data-invalid={field.errors !== null}>
               <FieldLabel
-                htmlFor="form-formisch-name"
+                htmlFor="form-formisch-email"
                 className="text-muted-foreground"
               >
                 E-mail
@@ -80,10 +107,10 @@ export const SignUpForm = () => {
                 <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                 <Input
                   {...field.props}
-                  id="form-formisch-name"
+                  id="form-formisch-email"
                   value={field.input ?? ""}
                   aria-invalid={field.errors !== null}
-                  placeholder="user@exmaple.com"
+                  placeholder="user@example.com"
                   autoComplete="off"
                   type="email"
                   className="pl-10"
@@ -102,7 +129,7 @@ export const SignUpForm = () => {
           {(field) => (
             <Field data-invalid={field.errors !== null}>
               <FieldLabel
-                htmlFor="form-formisch-passwrord"
+                htmlFor="form-formisch-password"
                 className="text-muted-foreground"
               >
                 Senha
@@ -111,7 +138,7 @@ export const SignUpForm = () => {
                 <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                 <Input
                   {...field.props}
-                  id="form-formisch-passwrord"
+                  id="form-formisch-password"
                   value={field.input ?? ""}
                   aria-invalid={field.errors !== null}
                   placeholder="********"
@@ -161,9 +188,24 @@ export const SignUpForm = () => {
         </FormischField>
       </FieldGroup>
 
+      {serverError && (
+        <p className="text-destructive mt-2 text-sm">{serverError}</p>
+      )}
+
       <div className="py-4">
-        <Button type="submit" className="w-full bg-blue-600 text-white">
-          Criar Conta
+        <Button
+          type="submit"
+          disabled={form.isSubmitting}
+          className="w-full bg-blue-600 text-white"
+        >
+          {form.isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Criando conta...
+            </>
+          ) : (
+            "Criar Conta"
+          )}
         </Button>
       </div>
     </Form>
