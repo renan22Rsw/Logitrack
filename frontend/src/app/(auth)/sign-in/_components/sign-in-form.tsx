@@ -16,9 +16,14 @@ import {
   Field as FormischField,
 } from "@formisch/react";
 
-import { User, Mail, Lock } from "lucide-react";
+import { Mail, Lock, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const SignInForm = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
+
   const form = useForm({
     schema: SignInSchema,
     initialInput: {
@@ -27,9 +32,32 @@ export const SignInForm = () => {
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof SignInSchema> = (output) => {
-    // Do something with the validated form values.
-    console.log(output);
+  const handleSubmit: SubmitHandler<typeof SignInSchema> = async (output) => {
+    setServerError(null);
+
+    try {
+      const { email, password } = output;
+
+      const response = await fetch("/api/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setServerError(data.message ?? "Ocorreu um erro. Tente novamente.");
+      }
+
+      router.refresh();
+    } catch (err) {
+      setServerError("Não foi possível conectar ao servidor. Tente novamente.");
+      console.log(err);
+    }
   };
 
   return (
@@ -98,9 +126,24 @@ export const SignInForm = () => {
         </FormischField>
       </FieldGroup>
 
+      {serverError && (
+        <p className="text-destructive mt-2 text-sm">{serverError}</p>
+      )}
+
       <div className="py-4">
-        <Button type="submit" className="w-full bg-blue-600 text-white">
-          Entrar
+        <Button
+          type="submit"
+          disabled={form.isSubmitting}
+          className="w-full bg-blue-600 text-white"
+        >
+          {form.isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Entrar
+            </>
+          ) : (
+            "Criar Conta"
+          )}
         </Button>
       </div>
     </Form>
