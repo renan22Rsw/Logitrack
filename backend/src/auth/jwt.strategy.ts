@@ -4,12 +4,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { JwtPayload } from '@/types/jwt-payload';
 import 'dotenv/config';
 import { DatabaseService as PrismaService } from '@/database/database.service';
+import { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly prisma: PrismaService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request: FastifyRequest) => request?.cookies?.access_token ?? null,
+      ]),
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET as string,
     });

@@ -92,10 +92,17 @@ export class AuthService {
     if (!storedToken) throw new UnauthorizedException('Invalid refresh token');
 
     if (storedToken.expiresAt < new Date()) {
+      await this.prisma.refreshToken.delete({ where: { id: storedToken.id } });
       throw new UnauthorizedException('Refresh token expired');
     }
 
-    const payload: JwtPayload = this.jwtService.verify(token);
+    let payload: JwtPayload;
+
+    try {
+      payload = this.jwtService.verify(token);
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
 
     const newAcessToken = this.jwtService.sign(
       {
