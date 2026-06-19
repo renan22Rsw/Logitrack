@@ -20,7 +20,7 @@ export const ProductCards = ({ products }: ProductCardsProps) => {
               <CardTitle className="text-muted-foreground text-sm font-bold">
                 {product.title}
               </CardTitle>
-              <p className="text-xl font-bold">{product.value}</p>
+              <p className="text-xl font-bold">{product.stock}</p>
               <p
                 className="flex items-center gap-1 font-semibold"
                 style={{ color: product.color }}

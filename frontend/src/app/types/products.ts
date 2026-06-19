@@ -9,9 +9,9 @@ export type ProductHeaderTypes = {
   placeholder?: string;
 };
 
-export type ProductCardsTypes = {
+export interface ProductCardsTypes {
   title: string;
-  value: number;
+  stock: number | string;
   description: string;
   arrowUp?: JSX.Element | null;
   icon: ForwardRefExoticComponent<
@@ -19,7 +19,7 @@ export type ProductCardsTypes = {
   >;
   color: string;
   bgColor: string;
-};
+}
 
 export type productTableTypes = {
   name: string;

@@ -72,7 +72,12 @@ const adminNavItems = [
   },
 ];
 
-export const AppSidebar = () => {
+interface AppSideBarProps {
+  name: string;
+  email: string;
+}
+
+export const AppSidebar = ({ name, email }: AppSideBarProps) => {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -162,15 +167,15 @@ export const AppSidebar = () => {
           <div className="flex items-center gap-3">
             <Avatar className="size-10">
               <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium">
-                AD
+                {name?.charAt(0) + name?.charAt(1)}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-1 flex-col">
               <span className="text-sidebar-foreground text-sm font-medium">
-                Admin
+                {name}
               </span>
               <span className="text-sidebar-foreground/60 text-xs">
-                admin@logitrack.com
+                {email}
               </span>
             </div>
             <ChevronRight className="text-sidebar-foreground/60 size-4" />
