@@ -8,3 +8,14 @@ export interface Products {
   initialStock: number;
   createdAt: Date;
 }
+
+export interface ProductsPage {
+  data: Products[];
+
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

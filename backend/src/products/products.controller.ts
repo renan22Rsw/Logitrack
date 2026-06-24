@@ -19,6 +19,7 @@ import { Product, Role } from '@prisma/client';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { RolesGuard } from '@/users/roles.guard';
 import { Roles } from '@/users/roles.decorator';
+import { FindAllProductsResponse } from '@/types/products';
 
 @Controller('products')
 export class ProductsController {
@@ -40,8 +41,16 @@ export class ProductsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAllProducts(@Query('search') search: string): Promise<Product[]> {
-    return this.productsService.findAllProducts(search);
+  findAllProducts(
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<Product[] | FindAllProductsResponse> {
+    return this.productsService.findAllProducts(
+      search,
+      page ? Number(page) : undefined,
+      limit ? Number(limit) : undefined,
+    );
   }
 
   @Get(':id')

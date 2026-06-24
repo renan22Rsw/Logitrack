@@ -15,6 +15,7 @@ import {
   AuditAction,
   AuditEntity,
 } from '@prisma/client';
+import { FindAllProductsResponse } from '@/types/products';
 
 @Injectable()
 export class ProductsService {
@@ -91,22 +92,69 @@ export class ProductsService {
     });
   }
 
-  async findAllProducts(search?: string): Promise<Product[]> {
-    return this.prisma.product.findMany({
-      where: {
-        deletedAt: null,
+  async findAllProducts(
+    search?: string,
+    page?: number,
+    limit?: number,
+  ): Promise<Product[] | FindAllProductsResponse> {
+    const where = {
+      deletedAt: null,
 
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { sku: { contains: search, mode: 'insensitive' } },
-          ],
-        }),
+      ...(search && {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
+          },
+
+          {
+            sku: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
+          },
+        ],
+      }),
+    };
+
+    if (!page || !limit) {
+      return this.prisma.product.findMany({
+        where,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+
+      this.prisma.product.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data: products,
+
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    };
   }
 
   async findProductById(id: string): Promise<Product | null> {

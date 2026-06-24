@@ -13,50 +13,10 @@ import {
   UserX,
 } from "lucide-react";
 
-export const productCards: ProductCardsTypes[] = [
-  {
-    title: "Total de Produtos",
-    value: 248,
-    description: `+3 novos este mes`,
-    arrowUp: <ArrowUp size={16} />,
-    icon: Package,
-    color: "#3B82F6",
-    bgColor: "#BCD2FB",
-  },
-
-  {
-    title: "Estoque Baixo",
-    value: 18,
-    description: "requerem atenção",
-    icon: TriangleAlert,
-    color: "#F59E0B",
-    bgColor: "#FEF3C7",
-  },
-
-  {
-    title: "Produtos Sem Estoque",
-    value: 12,
-    description: "produtos indisponiveis",
-    icon: PackageX,
-    color: "#E45858",
-    bgColor: "#FCDAD6",
-  },
-
-  {
-    title: "Valor Total em Estoque",
-    description: "+8% vs mes anterior",
-    arrowUp: <ArrowUp size={16} />,
-    icon: Layers,
-    color: "#35A75D",
-    bgColor: "#DCFCE7",
-    value: 1224,
-  },
-];
-
 export const stockMovementsCards: ProductCardsTypes[] = [
   {
     title: "Total de Entradas",
-    value: 1248,
+    stock: 1248,
     description: `+18 vs mes anterior`,
     arrowUp: <ArrowUp size={16} />,
     icon: ArrowUp,
@@ -66,7 +26,7 @@ export const stockMovementsCards: ProductCardsTypes[] = [
 
   {
     title: "Total de Saídas",
-    value: 1089,
+    stock: 1089,
     description: `+18 vs mes anterior`,
     arrowUp: <ArrowUp size={16} />,
     icon: ArrowDown,
@@ -76,7 +36,7 @@ export const stockMovementsCards: ProductCardsTypes[] = [
 
   {
     title: "Movimentações totais",
-    value: 2337,
+    stock: 2337,
     description: `+15% vs mes anterior`,
     arrowUp: <ArrowUp size={16} />,
     icon: ArrowRightLeft,
@@ -86,7 +46,7 @@ export const stockMovementsCards: ProductCardsTypes[] = [
 
   {
     title: "Produtos Movimentados",
-    value: 156,
+    stock: 156,
     description: "+9% vs mes anterior",
     arrowUp: <ArrowUp size={16} />,
     icon: Package,
@@ -98,7 +58,7 @@ export const stockMovementsCards: ProductCardsTypes[] = [
 export const usersCards: ProductCardsTypes[] = [
   {
     title: "Total de Usuarios",
-    value: 24,
+    stock: 24,
     description: `+3 novos este mes`,
     arrowUp: <ArrowUp size={16} />,
     icon: Users,
@@ -108,7 +68,7 @@ export const usersCards: ProductCardsTypes[] = [
 
   {
     title: "Usuarios Ativos",
-    value: 21,
+    stock: 21,
     description: "+3 novos este mes",
     arrowUp: <ArrowUp size={16} />,
     icon: ShieldCheck,
@@ -118,7 +78,7 @@ export const usersCards: ProductCardsTypes[] = [
 
   {
     title: "Usuarios Inativos",
-    value: 10,
+    stock: 10,
     description: `+3 novos este mes`,
     arrowUp: <ArrowUp size={16} />,
     icon: UserX,
@@ -128,7 +88,7 @@ export const usersCards: ProductCardsTypes[] = [
 
   {
     title: "Perfil de Acesso",
-    value: 3,
+    stock: 3,
     description: `Perfil Cadastrado`,
     icon: Shield,
     color: "#8B5CF6",
