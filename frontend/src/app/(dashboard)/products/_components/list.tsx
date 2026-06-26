@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Products } from "@/types/products";
 import { useState } from "react";
 import { EditProductButton } from "./edit-product-button";
-import { DeleteProductButton } from "./delete-button";
+import { DeleteProductButton } from "./delete-product-button";
 
 interface ProductListProps {
   products: Products[];
@@ -75,7 +75,7 @@ export const ProductList = ({ products }: ProductListProps) => {
                 description={product.description as string}
                 price={product.price}
               />
-              <DeleteProductButton />
+              <DeleteProductButton id={product.id} />
             </div>
           </div>
         ))}

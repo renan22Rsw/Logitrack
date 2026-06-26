@@ -170,7 +170,7 @@ export const StockMovementsTable = () => {
         <span className="text-muted-foreground w-full text-sm font-semibold">
           Mostrando 1 a 10 de {stockMovements.length} Movimentações
         </span>
-        <ProductPagination />
+        {/* <ProductPagination meta={} /> */}
       </CardFooter>
     </Card>
   );

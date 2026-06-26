@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { ProductPagination } from "./pagination";
-import { DeleteProductButton } from "./delete-button";
+import { DeleteProductButton } from "./delete-product-button";
 import { EditProductButton } from "./edit-product-button";
 import { ProductsPage } from "@/types/products";
 
@@ -70,7 +70,7 @@ export const ProductTable = ({ products }: ProductsTableProps) => {
                     description={product.description as string}
                     price={product.price}
                   />
-                  <DeleteProductButton />
+                  <DeleteProductButton id={product.id} />
                 </TableCell>
               </TableRow>
             ))}

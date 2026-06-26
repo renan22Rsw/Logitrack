@@ -1,5 +1,10 @@
 import { LucideProps } from "lucide-react";
-import { ForwardRefExoticComponent, JSX, RefAttributes } from "react";
+import {
+  ForwardRefExoticComponent,
+  JSX,
+  ReactNode,
+  RefAttributes,
+} from "react";
 
 export type ProductHeaderTypes = {
   title: string;
@@ -7,6 +12,7 @@ export type ProductHeaderTypes = {
   hasButton: boolean;
   data: ProductCardsTypes[];
   placeholder?: string;
+  children?: ReactNode;
 };
 
 export interface ProductCardsTypes {

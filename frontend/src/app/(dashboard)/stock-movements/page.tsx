@@ -8,7 +8,7 @@ const StockMovements = () => {
       <StockMovementsHeader
         title="Movimentações"
         description="Acompanhe todas as entradas e saídas de produtos do estoque"
-        hasButton={false}
+        hasButton
         data={stockMovementsCards}
         placeholder="Busque por movimentações"
       />

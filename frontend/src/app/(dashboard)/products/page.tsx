@@ -6,6 +6,7 @@ import {
   getProducts,
   getProductsByPage,
 } from "@/lib/api/products/get-products";
+import { CreateProductButton } from "./_components/create-product-button";
 
 const Products = async ({
   searchParams,
@@ -24,7 +25,10 @@ const Products = async ({
         hasButton
         data={mapProductsCards(products)}
         placeholder="Buscar Produtos"
-      />
+      >
+        <CreateProductButton />
+      </ProductsHeader>
+
       <ProductContainer>
         <ProductMain productsPage={productsPage} productList={products} />
       </ProductContainer>

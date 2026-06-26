@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { ProductCards } from "./cards";
 import { ProductHeaderTypes } from "@/app/types/products";
-import { CreateProductButton } from "./create-product-button";
 
 export const ProductsHeader = ({
   title,
@@ -10,6 +9,7 @@ export const ProductsHeader = ({
   hasButton,
   data,
   placeholder,
+  children,
 }: ProductHeaderTypes) => {
   return (
     <header className="px-6 py-8">
@@ -27,7 +27,7 @@ export const ProductsHeader = ({
             className="max-w-80 rounded-lg py-4.5 pl-10 placeholder:text-xs"
           />
 
-          {hasButton && <CreateProductButton />}
+          {hasButton && children}
         </div>
       </div>
 
