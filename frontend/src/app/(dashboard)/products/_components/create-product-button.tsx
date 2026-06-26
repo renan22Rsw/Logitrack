@@ -22,13 +22,20 @@ import { ProductSchema } from "@/schemas/product-schema";
 import {
   Form,
   Field as FormischField,
+  reset,
   SubmitHandler,
   useForm,
 } from "@formisch/react";
 import { Plus } from "lucide-react";
-import { MoneyInput } from "./money-input";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 export const CreateProductButton = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const form = useForm({
     schema: ProductSchema,
     initialInput: {
@@ -36,12 +43,47 @@ export const CreateProductButton = () => {
       sku: "",
       description: "",
       price: 100,
+      initialStock: 10,
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof ProductSchema> = (output) => {
-    // Do something with the validated form values.
-    console.log(output);
+  const handleSubmit: SubmitHandler<typeof ProductSchema> = async (output) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(output),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          Array.isArray(data.message) ? data.message.join(", ") : data.message,
+        );
+      }
+
+      toast("Produto criado", {
+        description: "Seu produto foi criado com sucesso",
+      });
+
+      router.refresh();
+      reset(form);
+    } catch (err) {
+      console.log(err);
+
+      toast("Erro ao criar produto", {
+        description:
+          err instanceof Error ? err.message : "Tente novamente mais tarde",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -150,14 +192,46 @@ export const CreateProductButton = () => {
                   >
                     Preço do produto
                   </FieldLabel>
-                  <MoneyInput
+
+                  <Input
                     {...field.props}
                     id="form-formisch-product-price"
-                    value={field.input ?? ""}
+                    value={field.input ?? 0}
                     aria-invalid={field.errors !== null}
-                    placeholder="Ex: R$ 19,99"
                     autoComplete="off"
+                    type="number"
+                    placeholder="ex: R$100,00"
                   />
+
+                  {field.errors && (
+                    <FieldError
+                      errors={field.errors.map((message) => ({ message }))}
+                    />
+                  )}
+                </Field>
+              )}
+            </FormischField>
+
+            <FormischField of={form} path={["initialStock"]}>
+              {(field) => (
+                <Field data-invalid={field.errors !== null}>
+                  <FieldLabel
+                    htmlFor="form-formisch-product-stcok"
+                    className="text-muted-foreground"
+                  >
+                    Stock inicial
+                  </FieldLabel>
+
+                  <Input
+                    {...field.props}
+                    id="form-formisch-product-stock"
+                    value={field.input ?? 0}
+                    aria-invalid={field.errors !== null}
+                    autoComplete="off"
+                    type="number"
+                    placeholder="ex:"
+                  />
+
                   {field.errors && (
                     <FieldError
                       errors={field.errors.map((message) => ({ message }))}
@@ -172,7 +246,16 @@ export const CreateProductButton = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Criar</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Spinner />
+                  Criando...
+                </>
+              ) : (
+                "Criar"
+              )}
+            </Button>
           </DialogFooter>
         </Form>
       </DialogContent>

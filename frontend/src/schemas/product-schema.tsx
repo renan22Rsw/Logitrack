@@ -29,4 +29,12 @@ export const ProductSchema = v.object({
     v.transform((value) => Number(value)),
     v.gtValue(0),
   ),
+
+  initialStock: v.optional(
+    v.pipe(
+      v.union([v.string(), v.number()]),
+      v.transform((value) => Number(value)),
+      v.gtValue(0, "O estoque inicial deve ser maior que zero"),
+    ),
+  ),
 });

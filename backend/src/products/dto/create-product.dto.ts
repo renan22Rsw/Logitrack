@@ -6,7 +6,6 @@ import {
   IsNumber,
   Min,
   IsInt,
-  IsPositive,
   Matches,
 } from 'class-validator';
 
@@ -31,10 +30,11 @@ export class CreateProductDto {
   @Min(0.01)
   price: number;
 
-  @Transform(({ value }) => Number(value))
+  @Transform(({ value }) =>
+    value === '' || value == null ? undefined : Number(value),
+  )
   @IsOptional()
   @IsInt()
-  @IsPositive()
   @Min(0)
   initialStock?: number;
 }
