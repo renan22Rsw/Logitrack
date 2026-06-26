@@ -142,7 +142,7 @@ export const SignInForm = () => {
               Entrar
             </>
           ) : (
-            "Criar Conta"
+            "Entrar"
           )}
         </Button>
       </div>

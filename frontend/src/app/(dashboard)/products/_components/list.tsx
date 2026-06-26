@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Products } from "@/types/products";
-import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { EditProductButton } from "./edit-product-button";
+import { DeleteProductButton } from "./delete-button";
 
 interface ProductListProps {
   products: Products[];
@@ -66,7 +67,16 @@ export const ProductList = ({ products }: ProductListProps) => {
               </div>
             </div>
 
-            <ChevronRight />
+            <div className="flex flex-col justify-between">
+              <EditProductButton
+                id={product.id}
+                name={product.name}
+                sku={product.sku}
+                description={product.description as string}
+                price={product.price}
+              />
+              <DeleteProductButton />
+            </div>
           </div>
         ))}
       </CardContent>

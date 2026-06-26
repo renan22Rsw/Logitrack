@@ -26,23 +26,71 @@ import {
   useForm,
 } from "@formisch/react";
 import { Pencil } from "lucide-react";
-import { MoneyInput } from "./money-input";
 
-export const EditProductButton = () => {
+import { toast } from "sonner";
+import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
+
+interface EditProductsButtonProps {
+  id: string;
+  name: string;
+  sku: string;
+  description: string;
+  price: number;
+}
+
+export const EditProductButton = ({
+  id,
+  name,
+  sku,
+  description,
+  price,
+}: EditProductsButtonProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const form = useForm({
     schema: ProductSchema,
     initialInput: {
-      title: "",
-      sku: "",
-      description: "",
-      price: 100,
-      initialStock: 10,
+      name,
+      sku,
+      description,
+      price,
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof ProductSchema> = (output) => {
-    // Do something with the validated form values.
-    console.log(output);
+  const handleSubmit: SubmitHandler<typeof ProductSchema> = async (output) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(output),
+
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao editar produto");
+      }
+
+      toast("Produto editado", {
+        description: "Seu produto foi editado com sucesso",
+      });
+
+      router.refresh();
+    } catch (err) {
+      toast("Erro ao editar produto", {
+        description:
+          err instanceof Error ? err.message : "Tente novamente mais tarde",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -59,7 +107,7 @@ export const EditProductButton = () => {
 
         <Form of={form} onSubmit={handleSubmit}>
           <FieldGroup>
-            <FormischField of={form} path={["title"]}>
+            <FormischField of={form} path={["name"]}>
               {(field) => (
                 <Field data-invalid={field.errors !== null}>
                   <FieldLabel
@@ -70,7 +118,7 @@ export const EditProductButton = () => {
                   </FieldLabel>
                   <Input
                     {...field.props}
-                    id="form-formisch-product-title"
+                    id="form-formisch-product-name"
                     value={field.input ?? ""}
                     aria-invalid={field.errors !== null}
                     placeholder="Ex: Camiseta"
@@ -146,40 +194,15 @@ export const EditProductButton = () => {
                   >
                     Preço do produto
                   </FieldLabel>
-                  <MoneyInput
-                    {...field.props}
-                    id="form-formisch-product-price"
-                    value={field.input ?? ""}
-                    aria-invalid={field.errors !== null}
-                    placeholder="Ex: R$ 19,99"
-                    autoComplete="off"
-                  />
-                  {field.errors && (
-                    <FieldError
-                      errors={field.errors.map((message) => ({ message }))}
-                    />
-                  )}
-                </Field>
-              )}
-            </FormischField>
 
-            <FormischField of={form} path={["initialStock"]}>
-              {(field) => (
-                <Field data-invalid={field.errors !== null}>
-                  <FieldLabel
-                    htmlFor="form-formisch-product-stock"
-                    className="text-muted-foreground"
-                  >
-                    Inicial Stock
-                  </FieldLabel>
                   <Input
                     {...field.props}
-                    id="form-formisch-product-stock"
-                    value={field.input ?? ""}
+                    id="form-formisch-product-price"
+                    value={field.input ?? 0}
                     aria-invalid={field.errors !== null}
-                    placeholder="Ex: 10"
                     autoComplete="off"
                     type="number"
+                    placeholder="ex: R$100,00"
                   />
                   {field.errors && (
                     <FieldError
@@ -192,10 +215,20 @@ export const EditProductButton = () => {
           </FieldGroup>
 
           <DialogFooter className="border-none bg-white">
-            <DialogClose asChild>
+            <DialogClose asChild disabled={isLoading}>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Salvar</Button>
+
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Spinner />
+                  Salvando...
+                </>
+              ) : (
+                "Salvar"
+              )}
+            </Button>
           </DialogFooter>
         </Form>
       </DialogContent>

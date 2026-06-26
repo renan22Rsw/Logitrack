@@ -28,9 +28,9 @@ export const ProductTable = ({ products }: ProductsTableProps) => {
         <Table>
           <TableHeader className="h-full bg-[#F8F9F9]">
             <TableRow>
-              <TableHead onClick={() => console.log("oi")}>Produto</TableHead>
+              <TableHead>Produto</TableHead>
               <TableHead>SKU</TableHead>
-              <TableHead>Preço</TableHead>
+              <TableHead>Preço(R$)</TableHead>
               <TableHead>Estoque atual</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Ações</TableHead>
@@ -63,7 +63,13 @@ export const ProductTable = ({ products }: ProductsTableProps) => {
                 </TableCell>
 
                 <TableCell className="flex items-center gap-4">
-                  <EditProductButton />
+                  <EditProductButton
+                    id={product.id}
+                    name={product.name}
+                    sku={product.sku}
+                    description={product.description as string}
+                    price={product.price}
+                  />
                   <DeleteProductButton />
                 </TableCell>
               </TableRow>

@@ -32,11 +32,10 @@ export const CreateProductButton = () => {
   const form = useForm({
     schema: ProductSchema,
     initialInput: {
-      title: "",
+      name: "",
       sku: "",
       description: "",
       price: 100,
-      initialStock: 10,
     },
   });
 
@@ -64,7 +63,7 @@ export const CreateProductButton = () => {
 
         <Form of={form} onSubmit={handleSubmit}>
           <FieldGroup>
-            <FormischField of={form} path={["title"]}>
+            <FormischField of={form} path={["name"]}>
               {(field) => (
                 <Field data-invalid={field.errors !== null}>
                   <FieldLabel
@@ -158,33 +157,6 @@ export const CreateProductButton = () => {
                     aria-invalid={field.errors !== null}
                     placeholder="Ex: R$ 19,99"
                     autoComplete="off"
-                  />
-                  {field.errors && (
-                    <FieldError
-                      errors={field.errors.map((message) => ({ message }))}
-                    />
-                  )}
-                </Field>
-              )}
-            </FormischField>
-
-            <FormischField of={form} path={["initialStock"]}>
-              {(field) => (
-                <Field data-invalid={field.errors !== null}>
-                  <FieldLabel
-                    htmlFor="form-formisch-product-stock"
-                    className="text-muted-foreground"
-                  >
-                    Inicial Stock
-                  </FieldLabel>
-                  <Input
-                    {...field.props}
-                    id="form-formisch-product-stock"
-                    value={field.input ?? ""}
-                    aria-invalid={field.errors !== null}
-                    placeholder="Ex: 10"
-                    autoComplete="off"
-                    type="number"
                   />
                   {field.errors && (
                     <FieldError

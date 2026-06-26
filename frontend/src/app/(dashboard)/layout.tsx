@@ -3,6 +3,7 @@ import { AppSidebar } from "./_components/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Navbar } from "@/components/navbar";
 import { getUser } from "@/lib/api/users/get-user";
+import { Toaster } from "@/components/ui/sonner";
 
 export default async function DashBoardLayout({
   children,
@@ -24,6 +25,7 @@ export default async function DashBoardLayout({
             <Navbar />
             {children}
           </main>
+          <Toaster />
         </TooltipProvider>
       </SidebarProvider>
     </>
