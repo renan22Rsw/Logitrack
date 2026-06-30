@@ -13,6 +13,7 @@ export type ProductHeaderTypes = {
   data: ProductCardsTypes[];
   placeholder?: string;
   children?: ReactNode;
+  search: string;
 };
 
 export interface ProductCardsTypes {

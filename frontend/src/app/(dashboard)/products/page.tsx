@@ -5,16 +5,20 @@ import { ProductMain } from "./_components/main";
 import {
   getProducts,
   getProductsByPage,
+  getSearchProducts,
 } from "@/lib/api/products/get-products";
 import { CreateProductButton } from "./_components/create-product-button";
 
 const Products = async ({
   searchParams,
 }: {
-  searchParams: { page?: number };
+  searchParams: { page?: number; search?: string };
 }) => {
-  const { page } = await searchParams;
-  const products = await getProducts();
+  const { page, search } = await searchParams;
+  const products = search
+    ? await getSearchProducts(search)
+    : await getProducts();
+
   const productsPage = await getProductsByPage(page || 1);
 
   return (
@@ -23,14 +27,18 @@ const Products = async ({
         title="Produtos"
         description="Gerencie os produtos do estoque"
         hasButton
-        data={mapProductsCards(products)}
+        data={mapProductsCards(products ?? [])}
         placeholder="Buscar Produtos"
+        search={search ?? ""}
       >
         <CreateProductButton />
       </ProductsHeader>
 
       <ProductContainer>
-        <ProductMain productsPage={productsPage} productList={products} />
+        <ProductMain
+          productsPage={productsPage ?? []}
+          productList={products ?? []}
+        />
       </ProductContainer>
     </>
   );

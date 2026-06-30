@@ -35,10 +35,10 @@ export const ProductList = ({ products }: ProductListProps) => {
       </CardHeader>
 
       <CardContent className="space-y-2">
-        {visibleProducts.map((product, __index) => (
+        {visibleProducts.map((product) => (
           <div
             className="flex justify-between gap-4 rounded-lg bg-white p-2"
-            key={__index}
+            key={product.id}
           >
             <div>
               <h6 className="font-semibold">{product.name}</h6>

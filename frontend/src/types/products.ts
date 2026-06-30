@@ -9,7 +9,7 @@ export interface Products {
   createdAt: Date;
 }
 
-export interface ProductsPage {
+export interface ProductsByPage {
   data: Products[];
 
   meta: {

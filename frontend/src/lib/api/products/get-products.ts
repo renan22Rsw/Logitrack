@@ -10,7 +10,7 @@ export const getProducts = async (): Promise<Products[]> => {
       {
         method: "GET",
         headers: {
-          "Content-Type": "json/application",
+          "Content-Type": "application/json",
           cookie: cookieStore.toString(),
         },
       },
@@ -18,6 +18,33 @@ export const getProducts = async (): Promise<Products[]> => {
 
     const data: Products[] = await response.json();
 
+    return data;
+  } catch (err) {
+    if (err instanceof Error) {
+      throw Error(err.message);
+    }
+    throw new Error("Algo deu errado!");
+  }
+};
+
+export const getSearchProducts = async (
+  search: string,
+): Promise<Products[] | undefined> => {
+  try {
+    const cookieStore = await cookies();
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/products?search=${search}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: cookieStore.toString(),
+        },
+      },
+    );
+
+    const data: Products[] = await response.json();
     return data;
   } catch (err) {
     if (err instanceof Error) {
@@ -38,7 +65,7 @@ export const getProductsByPage = async (
       {
         method: "GET",
         headers: {
-          "Content-Type": "json/application",
+          "Content-Type": "application/json",
           cookie: cookieStore.toString(),
         },
       },

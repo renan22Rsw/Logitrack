@@ -10,7 +10,7 @@ export const getUser = async (): Promise<User | undefined> => {
       {
         method: "GET",
         headers: {
-          "Content-Type": "json/application",
+          "Content-Type": "application/json",
           cookie: cookieStore.toString(),
         },
       },
