@@ -15,6 +15,7 @@ import { Role, StockMovement, MovementType } from '@prisma/client';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { RolesGuard } from '@/users/roles.guard';
 import { Roles } from '@/users/roles.decorator';
+import { FindAllStockMovementsResponse } from '@/types/stock-movements';
 
 @Controller('stock-movements')
 export class StockMovementsController {
@@ -36,25 +37,21 @@ export class StockMovementsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  getAllStockMovements() {
-    return this.stackMovementsService.getAllStockMovements();
-  }
-
-  @Get('type')
-  @UseGuards(JwtAuthGuard)
-  getMovementsByType(@Query('type') type: MovementType) {
-    return this.stackMovementsService.getMovementsByType(type);
-  }
-
-  @Get('product')
-  @UseGuards(JwtAuthGuard)
-  getStockMovementByProductId(@Query('productId') productId: string) {
-    return this.stackMovementsService.getStockMovementByProductId(productId);
-  }
-
-  @Get('user')
-  @UseGuards(JwtAuthGuard)
-  getStockMovementByUserId(@Query('userId') userId: string) {
-    return this.stackMovementsService.getStockMovementByUserId(userId);
+  getAllStockMovements(
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('type') type?: MovementType,
+    @Query('productId') productId?: string,
+    @Query('userId') userId?: string,
+  ): Promise<StockMovement[] | FindAllStockMovementsResponse> {
+    return this.stackMovementsService.getAllStockMovements(
+      search,
+      page ? Number(page) : undefined,
+      limit ? Number(limit) : undefined,
+      type,
+      productId,
+      userId,
+    );
   }
 }
