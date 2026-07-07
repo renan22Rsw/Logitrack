@@ -7,10 +7,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ProductsPage } from "@/types/products";
+import { ProductsByPage } from "@/types/products";
 
 interface ProductPaginationProps {
-  meta: ProductsPage["meta"];
+  meta: ProductsByPage["meta"];
 }
 
 export const ProductPagination = ({ meta }: ProductPaginationProps) => {

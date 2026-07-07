@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,114 +7,35 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { StockMovements, StockMovementType } from "@/types/stock-movements";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { useState } from "react";
+import { formatDate } from "@/utils/format-date";
+interface StockMovementsListProps {
+  stockMovements: StockMovements[];
+}
 
-export const StockMovementsList = () => {
-  const stockMovements = [
-    {
-      date: "20/05/2023",
-      type: "entrada",
-      product: "Teclado Mecanico RGB",
-      sku: "TECL-RGB-001",
-      quantity: 20,
-      user: "Joaquin",
-    },
+export const StockMovementsList = ({
+  stockMovements,
+}: StockMovementsListProps) => {
+  const ITEMS_PER_PAGE = 10;
+  const [visibleCount, setVisibleCount] = useState<number>(ITEMS_PER_PAGE);
 
-    {
-      date: "20/05/2023",
-      type: "saida",
-      product: "Mouse Gamer",
-      sku: "MOUSE-GMR-001",
-      quantity: 10,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "saida",
-      product: "Monitor 24 Full HD",
-      sku: "MON-24FHD-001",
-      quantity: 25,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "Entrada",
-      product: "Cabo HDMI 2m",
-      sku: "CAB-HDMI-2M-001",
-      quantity: 2,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "saida",
-      product: "Headset Gamer 7.1",
-      sku: "HEAD-GMR-7.1-001",
-      quantity: 22,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "saida",
-      product: "Webcam Gamer",
-      sku: "WEB-GMR-001",
-      quantity: 20,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "entrada",
-      product: "Cadeira Gamer",
-      sku: "CAD-GMR-001",
-      quantity: 2,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "saida",
-      product: "Controle Gamer",
-      sku: "CON-GMR-001",
-      quantity: 6,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "entrada",
-      product: "Mouse pad Gamer",
-      sku: "MOU-GMR-001",
-      quantity: 10,
-      user: "Joaquin",
-    },
-
-    {
-      date: "20/05/2023",
-      type: "saida",
-      product: "Playstation 5",
-      sku: "PS5-001",
-      quantity: 10,
-      user: "Joaquin",
-    },
-  ];
+  const visibleStockMovements = stockMovements.slice(0, visibleCount);
+  const hasMore = visibleCount < stockMovements.length;
 
   return (
     <div className="space-y-4 py-4">
-      {stockMovements.map((stockMovement, __index) => (
-        <Card key={__index}>
+      {visibleStockMovements.map((stockMovement) => (
+        <Card key={stockMovement.id}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {stockMovement.type === "entrada" ? (
+                {stockMovement.type === StockMovementType.IN ? (
                   <ArrowUp
                     size={16}
                     color="#35A75D"
@@ -127,35 +50,37 @@ export const StockMovementsList = () => {
                 )}
 
                 <span className="text-muted-foreground text-sm">
-                  {stockMovement.date}
+                  {formatDate(stockMovement.createdAt)}
                 </span>
               </div>
               <div>
                 <Badge
                   className={cn(
-                    stockMovement.type === "entrada"
+                    stockMovement.type === StockMovementType.IN
                       ? "bg-green-200 text-green-600"
                       : "bg-red-200 text-red-600",
                   )}
                 >
-                  {stockMovement.type}
+                  {stockMovement.type === StockMovementType.IN
+                    ? "Entrada"
+                    : "Saida"}
                 </Badge>
               </div>
             </div>
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <CardTitle>{stockMovement.product}</CardTitle>
+            <CardTitle>{stockMovement.product.name}</CardTitle>
             <div className="flex items-center justify-between">
-              <CardDescription>{stockMovement.sku}</CardDescription>
+              <CardDescription>{stockMovement.product.sku}</CardDescription>
               <span
                 className={cn(
-                  stockMovement.type === "entrada"
+                  stockMovement.type === StockMovementType.IN
                     ? "font-semibold text-green-600"
                     : "font-semibold text-red-600",
                 )}
               >
-                {stockMovement.type === "entrada"
+                {stockMovement.type === StockMovementType.IN
                   ? `+${stockMovement.quantity}`
                   : `-${stockMovement.quantity}`}
               </span>
@@ -164,12 +89,13 @@ export const StockMovementsList = () => {
             <div className="flex items-center gap-2">
               <Avatar className="size-8">
                 <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium">
-                  AD
+                  {stockMovement.user.name.charAt(0) +
+                    stockMovement.user.name.charAt(1)}
                 </AvatarFallback>
               </Avatar>
 
               <span className="text-muted-foreground font-semibold">
-                {stockMovement.user}
+                {stockMovement.user.name}
               </span>
             </div>
           </CardContent>
@@ -181,9 +107,15 @@ export const StockMovementsList = () => {
           1 a 10 de {stockMovements.length} movimentações
         </span>
 
-        <Button variant={"outline"} className="w-full py-5 text-sm">
-          Carregar Mais
-        </Button>
+        {hasMore && (
+          <Button
+            variant="outline"
+            className="w-full py-5 text-sm"
+            onClick={() => setVisibleCount((prev) => prev + ITEMS_PER_PAGE)}
+          >
+            Carregar Mais
+          </Button>
+        )}
       </div>
     </div>
   );

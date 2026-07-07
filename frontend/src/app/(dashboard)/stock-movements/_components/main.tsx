@@ -3,13 +3,29 @@
 import { useIsMobile } from "@/hooks/use-mobile";
 import { StockMovementsTable } from "./table";
 import { StockMovementsList } from "./list";
+import { StockMovements, StockMovementsByPage } from "@/types/stock-movements";
 
-export const StockMovementsMain = () => {
+interface StockMovementsMainProps {
+  stockMovementsPage: StockMovementsByPage;
+  stockMovementsList: StockMovements[];
+}
+
+export const StockMovementsMain = ({
+  stockMovementsPage,
+  stockMovementsList,
+}: StockMovementsMainProps) => {
   const isMobile = useIsMobile();
 
   return (
     <main className="px-4">
-      {isMobile ? <StockMovementsList /> : <StockMovementsTable />}
+      {isMobile ? (
+        <StockMovementsList stockMovements={stockMovementsList} />
+      ) : (
+        <StockMovementsTable
+          page={stockMovementsPage}
+          search={stockMovementsList}
+        />
+      )}
     </main>
   );
 };
