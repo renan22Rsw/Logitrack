@@ -14,7 +14,7 @@ export const InputSearch = ({
   placeholder,
   initialSearch,
 }: InputSearchProps) => {
-  const [search, setSearch] = useState(initialSearch);
+  const [search, setSearch] = useState(initialSearch ?? "");
   const isFirstRender = useRef(true);
   const router = useRouter();
   const searchParams = useSearchParams();
