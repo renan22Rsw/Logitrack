@@ -44,7 +44,7 @@ export const StockMovementsTable = ({
             </TableRow>
           </TableHeader>
 
-          {search ? (
+          {search.length > 0 ? (
             <TableBody>
               {search.map((stockMovement) => (
                 <TableRow key={stockMovement.id}>
@@ -94,7 +94,7 @@ export const StockMovementsTable = ({
             <TableBody>
               {page.data.map((stockMovement) => (
                 <TableRow key={stockMovement.id}>
-                  <TableCell>Date</TableCell>
+                  <TableCell>{formatDate(stockMovement.createdAt)}</TableCell>
                   <TableCell>
                     <Badge
                       className={cn(
