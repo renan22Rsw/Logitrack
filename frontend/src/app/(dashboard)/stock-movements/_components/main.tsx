@@ -9,23 +9,30 @@ interface StockMovementsMainProps {
   stockMovementsPage: StockMovementsByPage;
   stockMovementsList: StockMovements[];
   stockMovementsSearch: StockMovements[];
+  searchTerm?: string;
 }
 
 export const StockMovementsMain = ({
   stockMovementsPage,
   stockMovementsList,
   stockMovementsSearch,
+  searchTerm,
 }: StockMovementsMainProps) => {
   const isMobile = useIsMobile();
 
   return (
     <main className="px-4">
       {isMobile ? (
-        <StockMovementsList stockMovements={stockMovementsList} />
+        <StockMovementsList
+          stockMovements={stockMovementsList}
+          search={stockMovementsSearch}
+          searchTerm={searchTerm}
+        />
       ) : (
         <StockMovementsTable
           page={stockMovementsPage}
           search={stockMovementsSearch}
+          searchTerm={searchTerm}
         />
       )}
     </main>

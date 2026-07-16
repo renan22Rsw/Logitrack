@@ -1,4 +1,4 @@
-import { StockMovements, StockMovementType } from "@/types/stock-movements";
+import { StockMovements } from "@/types/stock-movements";
 import { ArrowDown, ArrowRightLeft, ArrowUp } from "lucide-react";
 import { calculateGrow } from "@/utils/calculate-grow";
 
@@ -28,27 +28,27 @@ export const mapStockMovementsCards = (stockMovements: StockMovements[]) => {
   const totalStockMovements = stockMovements.length;
 
   const totalStockIn = stockMovements.filter(
-    ({ type }) => type === StockMovementType.IN,
+    ({ type }) => type === "IN",
   ).length;
 
   const totalStockOut = stockMovements.filter(
-    ({ type }) => type === StockMovementType.OUT,
+    ({ type }) => type === "OUT",
   ).length;
 
   const currentMonthIn = currentMonthMovements.filter(
-    ({ type }) => type === StockMovementType.IN,
+    ({ type }) => type === "IN",
   ).length;
 
   const previousMonthIn = previousMonthMovements.filter(
-    ({ type }) => type === StockMovementType.IN,
+    ({ type }) => type === "IN",
   ).length;
 
   const currentMonthOut = currentMonthMovements.filter(
-    ({ type }) => type === StockMovementType.OUT,
+    ({ type }) => type === "OUT",
   ).length;
 
   const previousMonthOut = previousMonthMovements.filter(
-    ({ type }) => type === StockMovementType.OUT,
+    ({ type }) => type === "OUT",
   ).length;
 
   const differenceIn = currentMonthIn - previousMonthIn;
@@ -85,8 +85,8 @@ export const mapStockMovementsCards = (stockMovements: StockMovements[]) => {
       stock: totalStockMovements,
       description:
         grow < 0
-          ? `sem movimentações no mês anterior`
-          : `${grow}% vs mes anterior`,
+          ? `-${Math.abs(grow)}% vs mês anterior`
+          : `+${grow}% vs mês anterior`,
       arrowUp: <ArrowUp size={16} />,
       icon: ArrowRightLeft,
       color: "#8B5CF6",

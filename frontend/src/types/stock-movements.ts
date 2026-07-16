@@ -26,7 +26,4 @@ export interface StockMovementsByPage {
   };
 }
 
-export enum StockMovementType {
-  IN = "IN",
-  OUT = "OUT",
-}
+type StockMovementType = "IN" | "OUT";

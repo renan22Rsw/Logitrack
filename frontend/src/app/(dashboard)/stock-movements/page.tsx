@@ -34,7 +34,7 @@ const StockMovements = async ({ searchParams }: StockMovementsProps) => {
         description="Acompanhe todas as entradas e saídas de produtos do estoque"
         hasButton
         search={search}
-        data={mapStockMovementsCards(stockMovements)}
+        data={mapStockMovementsCards(stockMovements ?? [])}
         placeholder="Busque por movimentações"
       >
         <CreateStockMovementsButton products={products ?? []} />
@@ -44,6 +44,7 @@ const StockMovements = async ({ searchParams }: StockMovementsProps) => {
         stockMovementsPage={stockMovementsPage ?? []}
         stockMovementsSearch={stockMovementsSearch ?? []}
         stockMovementsList={stockMovements ?? []}
+        searchTerm={search}
       />
     </>
   );

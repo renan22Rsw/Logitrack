@@ -11,11 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  StockMovements,
-  StockMovementsByPage,
-  StockMovementType,
-} from "@/types/stock-movements";
+import { StockMovements, StockMovementsByPage } from "@/types/stock-movements";
 import { ProductPagination } from "../../products/_components/pagination";
 
 import { formatDate } from "@/utils/format-date";
@@ -23,12 +19,16 @@ import { formatDate } from "@/utils/format-date";
 interface StockMovementsTableProps {
   page: StockMovementsByPage;
   search: StockMovements[];
+  searchTerm?: string;
 }
 
 export const StockMovementsTable = ({
   page,
   search,
+  searchTerm,
 }: StockMovementsTableProps) => {
+  const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
+
   return (
     <Card>
       <CardContent className="p-0">
@@ -44,99 +44,106 @@ export const StockMovementsTable = ({
             </TableRow>
           </TableHeader>
 
-          {search.length > 0 ? (
-            <TableBody>
-              {search.map((stockMovement) => (
-                <TableRow key={stockMovement.id}>
-                  <TableCell>{formatDate(stockMovement.createdAt)}</TableCell>
+          <TableBody>
+            {!hasSearch ? (
+              page.data.map((movement) => (
+                <TableRow key={movement.id}>
+                  <TableCell>{formatDate(movement.createdAt)}</TableCell>
                   <TableCell>
                     <Badge
                       className={cn(
-                        stockMovement.type === StockMovementType.IN
+                        movement.type === "IN"
                           ? "bg-green-200 text-green-600"
                           : "bg-red-200 text-red-600",
                       )}
                     >
-                      {stockMovement.type}
+                      {movement.type}
                       {/* function here */}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground font-semibold">
-                    {stockMovement.product.name}
+                    {movement.product.name}
                   </TableCell>
                   <TableCell className="text-muted-foreground font-semibold">
-                    {stockMovement.product.sku}
+                    {movement.product.sku}
                   </TableCell>
                   <TableCell
                     className={cn(
-                      stockMovement.type === StockMovementType.IN
+                      movement.type === "IN"
                         ? "font-semibold text-green-600"
                         : "font-semibold text-red-600",
                     )}
                   >
-                    {stockMovement.type === StockMovementType.IN
-                      ? `+${stockMovement.quantity}`
-                      : `-${stockMovement.quantity}`}
+                    {movement.type === "IN"
+                      ? `+${movement.quantity}`
+                      : `-${movement.quantity}`}
                   </TableCell>
                   <TableCell className="text-muted-foreground flex items-center gap-2 font-semibold">
                     <Avatar className="size-8">
                       <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium">
-                        {stockMovement.user.name.charAt(0) +
-                          stockMovement.user.name.charAt(1)}
+                        {movement.user.name.charAt(0) +
+                          movement.user.name.charAt(1)}
                       </AvatarFallback>
                     </Avatar>
-                    {stockMovement.user.name}
+                    {movement.user.name}
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          ) : (
-            <TableBody>
-              {page.data.map((stockMovement) => (
-                <TableRow key={stockMovement.id}>
-                  <TableCell>{formatDate(stockMovement.createdAt)}</TableCell>
+              ))
+            ) : search.length > 0 ? (
+              search.map((movement) => (
+                <TableRow key={movement.id}>
+                  <TableCell>{formatDate(movement.createdAt)}</TableCell>
                   <TableCell>
                     <Badge
                       className={cn(
-                        stockMovement.type === StockMovementType.IN
+                        movement.type === "IN"
                           ? "bg-green-200 text-green-600"
                           : "bg-red-200 text-red-600",
                       )}
                     >
-                      {stockMovement.type}
+                      {movement.type}
                       {/* function here */}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground font-semibold">
-                    {stockMovement.product.name}
+                    {movement.product.name}
                   </TableCell>
                   <TableCell className="text-muted-foreground font-semibold">
-                    {stockMovement.product.sku}
+                    {movement.product.sku}
                   </TableCell>
                   <TableCell
                     className={cn(
-                      stockMovement.type === StockMovementType.IN
+                      movement.type === "IN"
                         ? "font-semibold text-green-600"
                         : "font-semibold text-red-600",
                     )}
                   >
-                    {stockMovement.type === StockMovementType.IN
-                      ? `+${stockMovement.quantity}`
-                      : `-${stockMovement.quantity}`}
+                    {movement.type === "IN"
+                      ? `+${movement.quantity}`
+                      : `-${movement.quantity}`}
                   </TableCell>
                   <TableCell className="text-muted-foreground flex items-center gap-2 font-semibold">
                     <Avatar className="size-8">
                       <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium">
-                        {stockMovement.user.name.charAt(0) +
-                          stockMovement.user.name.charAt(1)}
+                        {movement.user.name.charAt(0) +
+                          movement.user.name.charAt(1)}
                       </AvatarFallback>
                     </Avatar>
-                    {stockMovement.user.name}
+                    {movement.user.name}
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-muted-foreground h-24 text-center"
+                >
+                  Nenhum resultado encontrado.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
       </CardContent>
 
