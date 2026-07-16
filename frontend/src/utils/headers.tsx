@@ -1,14 +1,5 @@
-import { ProductCardsTypes } from "@/app/types/products";
-import {
-  ArrowDown,
-  ArrowRightLeft,
-  ArrowUp,
-  Package,
-  Shield,
-  ShieldCheck,
-  Users,
-  UserX,
-} from "lucide-react";
+import { ProductCardsTypes } from "@/types/products";
+import { ArrowUp, Shield, ShieldCheck, Users, UserX } from "lucide-react";
 
 export const usersCards: ProductCardsTypes[] = [
   {

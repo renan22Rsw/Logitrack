@@ -1,5 +1,5 @@
-import { ProductCardsTypes } from "@/app/types/products";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProductCardsTypes } from "@/types/products";
 
 type ProductCardsProps = {
   products: ProductCardsTypes[];

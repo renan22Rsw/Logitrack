@@ -8,20 +8,32 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface ProductsMainProps {
   productsPage: ProductsByPage;
   productList: Products[];
+  productSearch: Products[];
+  searchTerm: string;
 }
 
 export const ProductMain = ({
   productsPage,
   productList,
+  productSearch,
+  searchTerm,
 }: ProductsMainProps) => {
   const isMobile = useIsMobile();
 
   return (
     <>
       {isMobile ? (
-        <ProductList products={productList} />
+        <ProductList
+          products={productList}
+          search={productSearch}
+          searchTerm={searchTerm}
+        />
       ) : (
-        <ProductTable page={productsPage} search={productList} />
+        <ProductTable
+          page={productsPage}
+          search={productSearch}
+          searchTerm={searchTerm}
+        />
       )}
     </>
   );

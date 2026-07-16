@@ -20,9 +20,16 @@ import { Products, ProductsByPage } from "@/types/products";
 interface ProductsTableProps {
   page: ProductsByPage;
   search: Products[];
+  searchTerm?: string;
 }
 
-export const ProductTable = ({ page, search }: ProductsTableProps) => {
+export const ProductTable = ({
+  page,
+  search,
+  searchTerm,
+}: ProductsTableProps) => {
+  const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
+
   return (
     <Card>
       <CardContent className="p-0">
@@ -38,14 +45,15 @@ export const ProductTable = ({ page, search }: ProductsTableProps) => {
             </TableRow>
           </TableHeader>
 
-          {search ? (
-            <TableBody>
-              {search.map((product) => (
+          <TableBody>
+            {!hasSearch ? (
+              page.data.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.sku}</TableCell>
                   <TableCell>{product.price}</TableCell>
                   <TableCell>{product.currentStock}</TableCell>
+
                   <TableCell>
                     <Badge
                       className={cn(
@@ -61,7 +69,7 @@ export const ProductTable = ({ page, search }: ProductsTableProps) => {
                       {product.currentStock <= 5 &&
                         product.currentStock > 3 &&
                         "Baixo"}
-                      {product.currentStock < 3 && "Critico"}
+                      {product.currentStock < 3 && "Crítico"}
                     </Badge>
                   </TableCell>
 
@@ -76,16 +84,15 @@ export const ProductTable = ({ page, search }: ProductsTableProps) => {
                     <DeleteProductButton id={product.id} />
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          ) : (
-            <TableBody>
-              {page.data.map((product) => (
+              ))
+            ) : search.length > 0 ? (
+              search.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.sku}</TableCell>
                   <TableCell>{product.price}</TableCell>
                   <TableCell>{product.currentStock}</TableCell>
+
                   <TableCell>
                     <Badge
                       className={cn(
@@ -101,7 +108,7 @@ export const ProductTable = ({ page, search }: ProductsTableProps) => {
                       {product.currentStock <= 5 &&
                         product.currentStock > 3 &&
                         "Baixo"}
-                      {product.currentStock < 3 && "Critico"}
+                      {product.currentStock < 3 && "Crítico"}
                     </Badge>
                   </TableCell>
 
@@ -116,9 +123,18 @@ export const ProductTable = ({ page, search }: ProductsTableProps) => {
                     <DeleteProductButton id={product.id} />
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-muted-foreground h-24 text-center"
+                >
+                  Nenhum resultado encontrado.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
       </CardContent>
 

@@ -1,6 +1,5 @@
-import { ProductCardsTypes } from "@/app/types/products";
 import { Products } from "@/types/products";
-import { calculateGrow } from "@/utils/calculate-products-grow";
+import { calculateGrow } from "@/utils/calculate-grow";
 import {
   ArrowUp,
   Layers,
@@ -9,7 +8,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 
-export function mapProductsCards(products: Products[]): ProductCardsTypes[] {
+export function mapProductsCards(products: Products[]) {
   const lowStock = products.filter((product) => product.currentStock < 10);
   const noStock = products.filter((products) => products.currentStock === 0);
 
@@ -19,19 +18,20 @@ export function mapProductsCards(products: Products[]): ProductCardsTypes[] {
   );
 
   const now = new Date();
-  const createdThisMonth = products.filter((product) => {
-    const created = new Date(product.createdAt);
+
+  const thisMonthProducts = products.filter(({ createdAt }) => {
+    const data = new Date(createdAt);
 
     return (
-      created.getMonth() === now.getMonth() &&
-      created.getFullYear() === now.getFullYear()
+      data.getMonth() === now.getMonth() &&
+      data.getFullYear() === now.getFullYear()
     );
-  }).length;
+  });
 
-  const previousMonth = products.filter((product) => {
-    const date = new Date(product.createdAt);
+  const lastMonthProducts = products.filter(({ createdAt }) => {
+    const date = new Date(createdAt);
 
-    const prevMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    const prevMonth = now.getDate() === 0 ? 11 : now.getMonth() - 1;
 
     const prevYear =
       now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
@@ -39,13 +39,13 @@ export function mapProductsCards(products: Products[]): ProductCardsTypes[] {
     return date.getMonth() === prevMonth && date.getFullYear() === prevYear;
   }).length;
 
-  const grow = calculateGrow(createdThisMonth, previousMonth);
+  const grow = calculateGrow(thisMonthProducts.length, lastMonthProducts);
 
   return [
     {
       title: "Total de Produtos",
       stock: products.length,
-      description: `+${createdThisMonth} novos este mes`,
+      description: `+${thisMonthProducts.length} novos este mes`,
       arrowUp: <ArrowUp size={16} />,
       icon: Package,
       color: "#3B82F6",
@@ -73,7 +73,10 @@ export function mapProductsCards(products: Products[]): ProductCardsTypes[] {
     {
       title: "Valor Total em Estoque",
       stock: totalStock,
-      description: `+${grow}% vs mes anterior`,
+      description:
+        grow < 0
+          ? `-${Math.abs(grow)}% vs mês anterior`
+          : `+${grow}% vs mês anterior`,
       arrowUp: <ArrowUp size={16} />,
       icon: Layers,
       color: "#35A75D",

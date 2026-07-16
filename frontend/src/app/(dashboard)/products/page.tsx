@@ -9,15 +9,18 @@ import {
 } from "@/lib/api/products/get-products";
 import { CreateProductButton } from "./_components/create-product-button";
 
-const Products = async ({
-  searchParams,
-}: {
-  searchParams: { page?: number; search?: string };
-}) => {
+interface ProductsProps {
+  searchParams: {
+    search: string;
+    page: number;
+  };
+}
+
+const Products = async ({ searchParams }: ProductsProps) => {
   const { page, search } = await searchParams;
-  const products = search
-    ? await getSearchProducts(search)
-    : await getProducts();
+
+  const products = await getProducts();
+  const productsSearch = await getSearchProducts(search);
 
   const productsPage = await getProductsByPage(page || 1);
 
@@ -29,7 +32,7 @@ const Products = async ({
         hasButton
         data={mapProductsCards(products ?? [])}
         placeholder="Buscar Produtos"
-        search={search ?? ""}
+        search={search}
       >
         <CreateProductButton />
       </ProductsHeader>
@@ -38,6 +41,8 @@ const Products = async ({
         <ProductMain
           productsPage={productsPage ?? []}
           productList={products ?? []}
+          productSearch={productsSearch ?? []}
+          searchTerm={search}
         />
       </ProductContainer>
     </>

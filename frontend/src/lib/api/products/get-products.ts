@@ -1,4 +1,4 @@
-import { Products, ProductsPage } from "@/types/products";
+import { Products, ProductsByPage } from "@/types/products";
 import { cookies } from "next/headers";
 
 export const getProducts = async (): Promise<Products[]> => {
@@ -56,7 +56,7 @@ export const getSearchProducts = async (
 
 export const getProductsByPage = async (
   page: number,
-): Promise<ProductsPage> => {
+): Promise<ProductsByPage> => {
   try {
     const cookieStore = await cookies();
 
@@ -71,7 +71,7 @@ export const getProductsByPage = async (
       },
     );
 
-    const data: ProductsPage = await response.json();
+    const data: ProductsByPage = await response.json();
 
     return data;
   } catch (err) {

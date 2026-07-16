@@ -1,6 +1,17 @@
 import { ProductCards } from "./cards";
-import { ProductHeaderTypes } from "@/app/types/products";
 import { InputSearch } from "./input-search";
+import { ProductCardsTypes } from "@/types/products";
+import { ReactNode } from "react";
+
+interface ProductHeaderProps {
+  title: string;
+  description: string;
+  hasButton: boolean;
+  data: ProductCardsTypes[];
+  placeholder?: string;
+  children?: ReactNode;
+  search: string;
+}
 
 export const ProductsHeader = ({
   title,
@@ -10,7 +21,7 @@ export const ProductsHeader = ({
   placeholder,
   children,
   search,
-}: ProductHeaderTypes) => {
+}: ProductHeaderProps) => {
   return (
     <header className="px-6 py-8">
       <div className="items-center justify-between xl:flex">
