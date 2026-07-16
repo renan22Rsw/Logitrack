@@ -1,8 +1,19 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProductCardsTypes } from "@/types/products";
+import { LucideProps } from "lucide-react";
+import { ForwardRefExoticComponent, JSX, RefAttributes } from "react";
 
 type ProductCardsProps = {
-  products: ProductCardsTypes[];
+  products: {
+    title: string;
+    stock: number | string;
+    description: string;
+    arrowUp?: JSX.Element | null;
+    icon: ForwardRefExoticComponent<
+      Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+    >;
+    color: string;
+    bgColor: string;
+  }[];
 };
 
 export const ProductCards = ({ products }: ProductCardsProps) => {

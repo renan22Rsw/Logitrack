@@ -1,84 +1,11 @@
 import { Products, ProductsByPage } from "@/types/products";
-import { cookies } from "next/headers";
+import { fetchApi } from "../api";
 
-export const getProducts = async (): Promise<Products[]> => {
-  try {
-    const cookieStore = await cookies();
+export const getProducts = (): Promise<Products[]> =>
+  fetchApi<Products[]>("/products");
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/products`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: cookieStore.toString(),
-        },
-      },
-    );
+export const getSearchProducts = (search: string): Promise<Products[]> =>
+  fetchApi<Products[]>(`/products?search=${search}`);
 
-    const data: Products[] = await response.json();
-
-    return data;
-  } catch (err) {
-    if (err instanceof Error) {
-      throw Error(err.message);
-    }
-    throw new Error("Algo deu errado!");
-  }
-};
-
-export const getSearchProducts = async (
-  search: string,
-): Promise<Products[] | undefined> => {
-  try {
-    const cookieStore = await cookies();
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/products?search=${search}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: cookieStore.toString(),
-        },
-      },
-    );
-
-    const data: Products[] = await response.json();
-    return data;
-  } catch (err) {
-    if (err instanceof Error) {
-      throw Error(err.message);
-    }
-    throw new Error("Algo deu errado!");
-  }
-};
-
-export const getProductsByPage = async (
-  page: number,
-): Promise<ProductsByPage> => {
-  try {
-    const cookieStore = await cookies();
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/products?page=${page}&limit=10`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: cookieStore.toString(),
-        },
-      },
-    );
-
-    const data: ProductsByPage = await response.json();
-
-    return data;
-  } catch (err) {
-    if (err instanceof Error) {
-      throw Error(err.message);
-    }
-
-    throw new Error("Algo deu errado");
-  }
-};
+export const getProductsByPage = (page: number): Promise<ProductsByPage> =>
+  fetchApi<ProductsByPage>(`/products?page=${page}&limit=10`);

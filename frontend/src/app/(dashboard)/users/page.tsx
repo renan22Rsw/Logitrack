@@ -11,6 +11,7 @@ const Users = () => {
         data={usersCards}
         hasButton={false}
         placeholder="Buscar Usuário"
+        search=""
       />
       <UserMain />
     </>

@@ -1,3 +1,4 @@
+import { PaginatedResponse } from "@/generics/response";
 import { Products } from "./products";
 import { User } from "./user";
 
@@ -15,15 +16,6 @@ export interface StockMovements {
   user: User;
 }
 
-export interface StockMovementsByPage {
-  data: StockMovements[];
-
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type StockMovementsByPage = PaginatedResponse<StockMovements>;
 
 type StockMovementType = "IN" | "OUT";
