@@ -19,6 +19,7 @@ import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
 
 import { Role } from '@prisma/client';
+import { PaginatedUser } from '@/types/user';
 
 @Controller('admin/users')
 export class AdminController {
@@ -29,8 +30,14 @@ export class AdminController {
   @Roles(Role.ADMIN)
   async getUsers(
     @Query('search') search?: string,
-  ): Promise<Omit<User, 'password'>[]> {
-    return this.adminService.getUsers(search);
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<Omit<User, 'password'>[] | PaginatedUser> {
+    return this.adminService.getUsers(
+      search,
+      page ? Number(page) : undefined,
+      limit ? Number(limit) : undefined,
+    );
   }
 
   @Post()

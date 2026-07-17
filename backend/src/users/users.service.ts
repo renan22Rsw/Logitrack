@@ -9,54 +9,73 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User, AuditAction, AuditEntity } from '@prisma/client';
 
 import bcrypt from 'bcrypt';
+import { PaginatedUser } from '@/types/user';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUsers(search?: string): Promise<Omit<User, 'password'>[]> {
-    if (search) {
-      return this.prisma.user.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: search,
-                mode: 'insensitive',
-              },
+  async getUsers(
+    search?: string,
+    page?: number,
+    limit?: number,
+  ): Promise<Omit<User, 'password'>[] | PaginatedUser> {
+    const where = {
+      ...(search && {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: 'insensitive' as const,
             },
-            {
-              email: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        },
+          },
 
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
+          {
+            email: {
+              contains: search,
+              mode: 'insensitive' as const,
+            },
+          },
+        ],
+      }),
+    };
+
+    if (!page || !limit) {
+      return this.prisma.user.findMany({
+        where,
+        orderBy: {
+          createdAt: 'desc',
         },
       });
     }
 
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-        deletedAt: true,
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+
+      this.prisma.user.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data: users,
+
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   }
 
   async getUniqueUser(id: string): Promise<Omit<User, 'password'> | null> {
