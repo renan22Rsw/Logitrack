@@ -11,6 +11,7 @@ interface UserMainProps {
   usersPage: UsersByPage;
   usersList: User[];
   userSearch: User[];
+  currentUser: User;
   searchTerm: string;
 }
 
@@ -18,6 +19,7 @@ export const UserMain = ({
   usersPage,
   usersList,
   userSearch,
+  currentUser,
   searchTerm,
 }: UserMainProps) => {
   const isMobile = useIsMobile();
@@ -29,6 +31,7 @@ export const UserMain = ({
           users={usersList}
           search={userSearch}
           searchTerm={searchTerm}
+          currentUser={currentUser}
         />
       ) : (
         <div className="w-3/4">
@@ -36,6 +39,7 @@ export const UserMain = ({
             page={usersPage}
             search={userSearch}
             searchTerm={searchTerm}
+            currentUser={currentUser}
           />
         </div>
       )}

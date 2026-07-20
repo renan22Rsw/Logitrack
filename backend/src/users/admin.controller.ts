@@ -27,7 +27,6 @@ export class AdminController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
   async getUsers(
     @Query('search') search?: string,
     @Query('page') page?: string,

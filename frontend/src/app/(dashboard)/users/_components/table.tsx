@@ -21,9 +21,15 @@ interface UsersTableProps {
   page: UsersByPage;
   search: User[];
   searchTerm?: string;
+  currentUser: User;
 }
 
-export const UsersTable = ({ page, search, searchTerm }: UsersTableProps) => {
+export const UsersTable = ({
+  page,
+  search,
+  searchTerm,
+  currentUser,
+}: UsersTableProps) => {
   const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
 
   return (
@@ -79,8 +85,9 @@ export const UsersTable = ({ page, search, searchTerm }: UsersTableProps) => {
                       name={user.name}
                       email={user.email}
                       role={user.role}
+                      currentUser={currentUser}
                     />
-                    <DeleteUserButton />
+                    <DeleteUserButton id={user.id} currentUser={currentUser} />
                   </TableCell>
                 </TableRow>
               ))
@@ -121,8 +128,9 @@ export const UsersTable = ({ page, search, searchTerm }: UsersTableProps) => {
                       name={user.name}
                       email={user.email}
                       role={user.role}
+                      currentUser={currentUser}
                     />
-                    <DeleteUserButton />
+                    <DeleteUserButton id={user.id} currentUser={currentUser} />
                   </TableCell>
                 </TableRow>
               ))

@@ -21,10 +21,16 @@ import { DeleteUserButton } from "./delete-button";
 interface UsersListProps {
   users: User[];
   search: User[];
+  currentUser: User;
   searchTerm?: string;
 }
 
-export const UsersList = ({ users, search, searchTerm }: UsersListProps) => {
+export const UsersList = ({
+  users,
+  search,
+  currentUser,
+  searchTerm,
+}: UsersListProps) => {
   const ITEMS_PER_PAGE = 10;
   const [visibleCount, setVisibleCount] = useState<number>(ITEMS_PER_PAGE);
 
@@ -79,8 +85,9 @@ export const UsersList = ({ users, search, searchTerm }: UsersListProps) => {
                     name={user.name}
                     email={user.email}
                     role={user.role}
+                    currentUser={currentUser}
                   />
-                  <DeleteUserButton />
+                  <DeleteUserButton id={user.id} currentUser={currentUser} />
                 </div>
               </div>
             ))}
@@ -122,8 +129,9 @@ export const UsersList = ({ users, search, searchTerm }: UsersListProps) => {
                   name={user.name}
                   email={user.email}
                   role={user.role}
+                  currentUser={currentUser}
                 />
-                <DeleteUserButton />
+                <DeleteUserButton id={user.id} currentUser={currentUser} />
               </div>
             </div>
           ))

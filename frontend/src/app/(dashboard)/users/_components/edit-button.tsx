@@ -37,7 +37,7 @@ import {
 } from "@formisch/react";
 import { Pencil } from "lucide-react";
 
-import { Role } from "@/types/user";
+import { Role, User } from "@/types/user";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -48,6 +48,7 @@ interface EditUserButtonProps {
   name: string;
   email: string;
   role: Role;
+  currentUser: User;
 }
 
 export const EditUserButton = ({
@@ -55,6 +56,7 @@ export const EditUserButton = ({
   name,
   email,
   role,
+  currentUser,
 }: EditUserButtonProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -101,7 +103,7 @@ export const EditUserButton = ({
     }
   };
 
-  const hasPermisson = role === "ADMIN";
+  const hasPermisson = currentUser.role !== "ADMIN";
 
   return (
     <Dialog>
