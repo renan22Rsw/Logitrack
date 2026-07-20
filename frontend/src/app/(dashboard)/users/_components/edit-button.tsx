@@ -37,6 +37,8 @@ import {
 } from "@formisch/react";
 import { Pencil } from "lucide-react";
 
+import { Role } from "@/types/user";
+
 export const EditUserButton = () => {
   const form = useForm({
     schema: UserSchema,
@@ -132,7 +134,7 @@ export const EditUserButton = () => {
 
                   <Select
                     value={field.input}
-                    onValueChange={(value: Roles) => field.onChange(value)}
+                    onValueChange={(value: Role) => field.onChange(value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um cargo" />

@@ -1,5 +1,8 @@
+"use client";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,112 +10,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { User } from "@/types/user";
+import { usersRoles } from "@/utils/users.table";
 
-export const UsersList = () => {
-  const users = [
-    {
-      id: 1,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "ADMIN",
-      status: "ativo",
-      color: "#3B82F6",
-      bgColor: "#BCD2FB",
-    },
+import { useState } from "react";
+import { EditUserButton } from "./edit-button";
+import { DeleteUserButton } from "./delete-button";
 
-    {
-      id: 2,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "inativo",
-      color: "#35A75D",
-      bgColor: "#DCFCE7",
-    },
+interface UsersListProps {
+  users: User[];
+  search: User[];
+  searchTerm?: string;
+}
 
-    {
-      id: 3,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      color: "#F59E0B",
-      bgColor: "#FEF3C7",
-    },
+export const UsersList = ({ users, search, searchTerm }: UsersListProps) => {
+  const ITEMS_PER_PAGE = 10;
+  const [visibleCount, setVisibleCount] = useState<number>(ITEMS_PER_PAGE);
 
-    {
-      id: 4,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "inativo",
-      color: "#35A75D",
-      bgColor: "#DCFCE7",
-    },
-
-    {
-      id: 5,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      color: "#F59E0B",
-      bgColor: "#FEF3C7",
-    },
-
-    {
-      id: 6,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      color: "#F59E0B",
-      bgColor: "#FEF3C7",
-    },
-
-    {
-      id: 7,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "inativo",
-      color: "#35A75D",
-      bgColor: "#DCFCE7",
-    },
-
-    {
-      id: 8,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "ativo",
-      color: "#35A75D",
-      bgColor: "#DCFCE7",
-    },
-
-    {
-      id: 9,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      color: "#F59E0B",
-      bgColor: "#FEF3C7",
-    },
-
-    {
-      id: 10,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-      color: "#35A75D",
-      bgColor: "#DCFCE7",
-    },
-  ];
+  const visibleUsers = users.slice(0, visibleCount);
+  const hasMore = visibleCount < users.length;
+  const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
 
   return (
     <Card>
@@ -121,46 +39,105 @@ export const UsersList = () => {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {users.map((user) => (
-          <div
-            className="flex justify-between rounded-lg border p-4"
-            key={user.id}
-          >
-            <div className="flex gap-3">
-              <Avatar>
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
+        {!hasSearch ? (
+          <>
+            {visibleUsers.map((user) => (
+              <div
+                className="flex justify-between rounded-lg border p-4"
+                key={user.id}
+              >
+                <div className="flex gap-3">
+                  <Avatar>
+                    <AvatarFallback>
+                      {user.name.charAt(0) + user.name.charAt(1)}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <div>
-                <h6 className="text-sm font-semibold">{user.user}</h6>
-                <p className="text-muted-foreground text-xs">{user.email}</p>
-                <div className="flex items-center gap-2 py-2">
-                  <Badge
-                    style={{ backgroundColor: user.bgColor, color: user.color }}
-                  >
-                    {user.type}
-                  </Badge>
-                  {user.status === "ativo" && (
-                    <Badge className="bg-green-200 text-green-600">Ativo</Badge>
-                  )}
-                  {user.status === "inativo" && (
-                    <Badge className="bg-red-200 text-red-600">Inativo</Badge>
-                  )}
+                  <div>
+                    <h6 className="text-sm font-semibold">{user.name}</h6>
+                    <p className="text-muted-foreground text-xs">
+                      {user.email}
+                    </p>
+                    <div className="flex items-center gap-2 py-2">
+                      {usersRoles(user.role)}
+
+                      <Badge
+                        className={cn(
+                          user.deletedAt === null
+                            ? "bg-green-200 text-green-600"
+                            : "bg-red-200 text-red-600",
+                        )}
+                      >
+                        {user.deletedAt === null ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <EditUserButton />
+                  <DeleteUserButton />
                 </div>
               </div>
+            ))}
+          </>
+        ) : search.length > 0 ? (
+          search.map((user) => (
+            <div
+              className="flex justify-between rounded-lg border p-4"
+              key={user.id}
+            >
+              <div className="flex gap-3">
+                <Avatar>
+                  <AvatarFallback>
+                    {user.name.charAt(0) + user.name.charAt(1)}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div>
+                  <h6 className="text-sm font-semibold">{user.name}</h6>
+                  <p className="text-muted-foreground text-xs">{user.email}</p>
+                  <div className="flex items-center gap-2 py-2">
+                    {usersRoles(user.role)}
+
+                    <Badge
+                      className={cn(
+                        user.deletedAt === null
+                          ? "bg-green-200 text-green-600"
+                          : "bg-red-200 text-red-600",
+                      )}
+                    >
+                      {user.deletedAt === null ? "Ativo" : "Inativo"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <EditUserButton />
+                <DeleteUserButton />
+              </div>
             </div>
-            <ArrowRight className="size-5" />
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-muted-foreground text-center">
+            Nenhum usuário encontrado.
+          </p>
+        )}
       </CardContent>
 
-      <CardFooter className="border-none bg-white">
-        <Link href={"#"}>
-          <div className="flex items-center font-semibold text-blue-500">
-            Ver todas as atividades{" "}
-            <ArrowRight size={16} className="mt-1 ml-2" />
-          </div>
-        </Link>
+      <CardFooter className="flex flex-col items-center gap-4 border-none bg-white">
+        <span className="text-muted-foreground font-semibold">
+          1 a 10 de {users.length} movimentações
+        </span>
+
+        {hasMore && (
+          <Button
+            variant="outline"
+            className="w-full py-5 text-sm"
+            onClick={() => setVisibleCount((prev) => prev + ITEMS_PER_PAGE)}
+          >
+            Carregar Mais
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

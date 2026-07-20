@@ -7,7 +7,7 @@ export const getAllUsers = (): Promise<User[]> =>
   fetchApi<User[]>("/admin/users");
 
 export const getSearchUsers = (search: string): Promise<User[]> =>
-  fetchApi<User[]>(`admin/users?search=${search}`);
+  fetchApi<User[]>(`/admin/users?search=${search}`);
 
 export const getUsersByPage = (page: number): Promise<UsersByPage> =>
   fetchApi(`/admin/users?page=${page}&limit=10`);

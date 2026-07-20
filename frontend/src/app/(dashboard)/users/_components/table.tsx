@@ -10,103 +10,21 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
-import { ProductPagination } from "../../products/_components/pagination";
+import { ProductPagination as UsersPagination } from "../../products/_components/pagination";
 import { Badge } from "@/components/ui/badge";
 import { DeleteUserButton } from "./delete-button";
 import { EditUserButton } from "./edit-button";
+import { User, UsersByPage } from "@/types/user";
+import { usersRoles } from "@/utils/users.table";
 
-export const UsersTable = () => {
-  const users = [
-    {
-      id: 1,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "ADMIN",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
+interface UsersTableProps {
+  page: UsersByPage;
+  search: User[];
+  searchTerm?: string;
+}
 
-    {
-      id: 2,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "inativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 3,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 4,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "inativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 5,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 6,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 7,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "inativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 8,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 9,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "MANAGER",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
-
-    {
-      id: 10,
-      user: "John Doe",
-      email: "K0ZqI@example.com",
-      type: "OPERATOR",
-      status: "ativo",
-      lastAccess: "20/05/2023",
-    },
-  ];
+export const UsersTable = ({ page, search, searchTerm }: UsersTableProps) => {
+  const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
 
   return (
     <Card>
@@ -124,59 +42,101 @@ export const UsersTable = () => {
           </TableHeader>
 
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="flex items-center gap-2 font-bold">
-                  <Avatar>
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  {user.user}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {user.email}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    className={cn(
-                      user.type === "ADMIN" && "bg-blue-200 text-blue-600",
-                      user.type === "OPERATOR" && "bg-green-200 text-green-600",
-                      user.type === "MANAGER" &&
-                        "bg-yellow-200 text-yellow-600",
-                    )}
-                  >
-                    {user.type}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    className={cn(
-                      user.status === "ativo" && "bg-green-200 text-green-600",
-                      user.status === "inativo" && "bg-red-200 text-red-600",
-                    )}
-                  >
-                    {user.status}
-                  </Badge>
-                </TableCell>
+            {!hasSearch ? (
+              page.data.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="flex items-center gap-2 font-bold">
+                    <Avatar>
+                      <AvatarFallback>
+                        {user.name.charAt(0) + user.name.charAt(1)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {user.name}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+                  <TableCell>{usersRoles(user.role)}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={cn(
+                        user.deletedAt === null
+                          ? "bg-green-200 text-green-600"
+                          : "bg-red-200 text-red-600",
+                      )}
+                    >
+                      {user.deletedAt === null ? "Ativo" : "Inativo"}
+                    </Badge>
+                  </TableCell>
 
-                <TableCell className="text-muted-foreground font-semibold">
-                  {user.lastAccess}
-                </TableCell>
+                  <TableCell className="text-muted-foreground font-semibold">
+                    teste
+                  </TableCell>
 
-                <TableCell className="flex items-center gap-4">
-                  <EditUserButton />
-                  <DeleteUserButton />
+                  <TableCell className="flex items-center gap-4">
+                    <EditUserButton />
+                    <DeleteUserButton />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : search.length > 0 ? (
+              search.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="flex items-center gap-2 font-bold">
+                    <Avatar>
+                      <AvatarFallback>
+                        {user.name.charAt(0) + user.name.charAt(1)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {user.name}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+                  <TableCell>{usersRoles(user.role)}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={cn(
+                        user.deletedAt === null
+                          ? "bg-green-200 text-green-600"
+                          : "bg-red-200 text-red-600",
+                      )}
+                    >
+                      {user.deletedAt === null ? "Ativo" : "Inativo"}
+                    </Badge>
+                  </TableCell>
+
+                  <TableCell className="text-muted-foreground font-semibold">
+                    teste
+                  </TableCell>
+
+                  <TableCell className="flex items-center gap-4">
+                    <EditUserButton />
+                    <DeleteUserButton />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-muted-foreground h-24 text-center"
+                >
+                  Nenhum resultado encontrado.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>
 
       <CardFooter className="flex w-full items-center justify-between">
         <span className="text-muted-foreground w-full text-sm font-semibold">
-          Mostrando 1 a 10 de {users.length} de usuários
+          Mostrando {(page.meta.page - 1) * page.meta.limit + 1} a{" "}
+          {Math.min(page.meta.page * page.meta.limit, page.meta.total)} de{" "}
+          {page.meta.total} usuários
         </span>
-        <ProductPagination />
+        <UsersPagination meta={page.meta} />
       </CardFooter>
     </Card>
   );

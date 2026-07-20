@@ -5,17 +5,38 @@ import { UsersTable } from "./table";
 import { UserActivityAside } from "./aside-activity";
 import { UserProfileAccessAside } from "./profile-access-aside";
 import { UsersList } from "./list";
+import { User, UsersByPage } from "@/types/user";
 
-export const UserMain = () => {
+interface UserMainProps {
+  usersPage: UsersByPage;
+  usersList: User[];
+  userSearch: User[];
+  searchTerm: string;
+}
+
+export const UserMain = ({
+  usersPage,
+  usersList,
+  userSearch,
+  searchTerm,
+}: UserMainProps) => {
   const isMobile = useIsMobile();
 
   return (
     <div className="justify-between gap-4 space-y-4 px-4 xl:flex">
       {isMobile ? (
-        <UsersList />
+        <UsersList
+          users={usersList}
+          search={userSearch}
+          searchTerm={searchTerm}
+        />
       ) : (
         <div className="w-3/4">
-          <UsersTable />
+          <UsersTable
+            page={usersPage}
+            search={userSearch}
+            searchTerm={searchTerm}
+          />
         </div>
       )}
 

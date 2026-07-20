@@ -9,5 +9,6 @@ export interface User {
   deletedAt: Date;
 }
 
-type Role = "ADMIN" | "MANAGER" | "OPERATOR";
-export type UsersByPage = PaginatedResponse<User[]>;
+export type Role = "ADMIN" | "MANAGER" | "OPERATOR";
+
+export type UsersByPage = PaginatedResponse<User>;
