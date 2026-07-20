@@ -10,6 +10,4 @@ export const UserSchema = v.object({
   ),
 
   role: v.picklist(["ADMIN", "MANAGER", "OPERATOR"], "O papel é obrigatório"),
-
-  status: v.picklist(["ACTIVE", "INACTIVE"], "O status é obrigatório"),
 });

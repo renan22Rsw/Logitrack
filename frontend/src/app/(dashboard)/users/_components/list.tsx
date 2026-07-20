@@ -74,7 +74,12 @@ export const UsersList = ({ users, search, searchTerm }: UsersListProps) => {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <EditUserButton />
+                  <EditUserButton
+                    id={user.id}
+                    name={user.name}
+                    email={user.email}
+                    role={user.role}
+                  />
                   <DeleteUserButton />
                 </div>
               </div>
@@ -112,7 +117,12 @@ export const UsersList = ({ users, search, searchTerm }: UsersListProps) => {
                 </div>
               </div>
               <div className="flex gap-3">
-                <EditUserButton />
+                <EditUserButton
+                  id={user.id}
+                  name={user.name}
+                  email={user.email}
+                  role={user.role}
+                />
                 <DeleteUserButton />
               </div>
             </div>

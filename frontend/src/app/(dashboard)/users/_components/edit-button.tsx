@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+
 import { UserSchema } from "@/schemas/user-schema";
 import {
   Form,
@@ -38,22 +38,70 @@ import {
 import { Pencil } from "lucide-react";
 
 import { Role } from "@/types/user";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
-export const EditUserButton = () => {
+interface EditUserButtonProps {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+}
+
+export const EditUserButton = ({
+  id,
+  name,
+  email,
+  role,
+}: EditUserButtonProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const form = useForm({
     schema: UserSchema,
     initialInput: {
-      name: "John Doe",
-      email: "john.doe@me.com",
-      role: "OPERATOR",
-      status: "ACTIVE",
+      name,
+      email,
+      role,
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof UserSchema> = (output) => {
-    // Do something with the validated form values.
-    console.log(output);
+  const handleSubmit: SubmitHandler<typeof UserSchema> = async (output) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(output),
+
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Eror ao editar usuário");
+      }
+
+      toast.success("Usuário editado", {
+        description: `O usuário ${output.name} foi editado com sucesso`,
+      });
+      router.refresh();
+    } catch (err) {
+      toast.error("Error ao editar usuário", {
+        description:
+          err instanceof Error ? err.message : "Tente novamente mais tarde",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const hasPermisson = role === "ADMIN";
 
   return (
     <Dialog>
@@ -73,18 +121,19 @@ export const EditUserButton = () => {
               {(field) => (
                 <Field data-invalid={field.errors !== null}>
                   <FieldLabel
-                    htmlFor="form-formisch-product-name"
+                    htmlFor="form-formisch-user-name"
                     className="text-muted-foreground"
                   >
                     Nome do usuário
                   </FieldLabel>
                   <Input
                     {...field.props}
-                    id="form-formisch-product-name"
+                    id="form-formisch-user-name"
                     value={field.input ?? ""}
                     aria-invalid={field.errors !== null}
-                    placeholder="Ex: Camiseta"
+                    placeholder="Nome de usuário"
                     autoComplete="off"
+                    disabled={hasPermisson}
                   />
                   {field.errors && (
                     <FieldError
@@ -99,19 +148,20 @@ export const EditUserButton = () => {
               {(field) => (
                 <Field data-invalid={field.errors !== null}>
                   <FieldLabel
-                    htmlFor="form-formisch-product-email"
+                    htmlFor="form-formisch-user-email"
                     className="text-muted-foreground"
                   >
                     E-mail do usuário
                   </FieldLabel>
                   <Input
                     {...field.props}
-                    id="form-formisch-product-email"
+                    id="form-formisch-user-email"
                     value={field.input ?? ""}
                     aria-invalid={field.errors !== null}
-                    placeholder="Ex: Camiseta"
+                    placeholder="E-mail"
                     autoComplete="off"
                     type="email"
+                    disabled={hasPermisson}
                   />
                   {field.errors && (
                     <FieldError
@@ -126,7 +176,7 @@ export const EditUserButton = () => {
               {(field) => (
                 <Field data-invalid={field.errors !== null}>
                   <FieldLabel
-                    htmlFor="form-formisch-product-role"
+                    htmlFor="form-formisch-user-role"
                     className="text-muted-foreground"
                   >
                     Cargo do usuário
@@ -135,6 +185,7 @@ export const EditUserButton = () => {
                   <Select
                     value={field.input}
                     onValueChange={(value: Role) => field.onChange(value)}
+                    disabled={hasPermisson}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um cargo" />
@@ -157,40 +208,23 @@ export const EditUserButton = () => {
                 </Field>
               )}
             </FormischField>
-
-            <FormischField of={form} path={["status"]}>
-              {(field) => (
-                <Field data-invalid={field.errors !== null}>
-                  <FieldLabel
-                    htmlFor="form-formisch-product-email"
-                    className="text-muted-foreground"
-                  >
-                    {field.input === "ACTIVE" ? "Ativo" : "Inativo"}
-                  </FieldLabel>
-
-                  <Switch
-                    id="form-formisch-user-role"
-                    checked={field.input === "ACTIVE"}
-                    onCheckedChange={(checked) =>
-                      field.onChange(checked ? "ACTIVE" : "INACTIVE")
-                    }
-                  />
-
-                  {field.errors && (
-                    <FieldError
-                      errors={field.errors.map((message) => ({ message }))}
-                    />
-                  )}
-                </Field>
-              )}
-            </FormischField>
           </FieldGroup>
 
           <DialogFooter className="border-none bg-white">
             <DialogClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Salvar</Button>
+
+            <Button type="submit" disabled={isLoading || hasPermisson}>
+              {isLoading ? (
+                <>
+                  <Spinner />
+                  Salvando...
+                </>
+              ) : (
+                "Salvar"
+              )}
+            </Button>
           </DialogFooter>
         </Form>
       </DialogContent>

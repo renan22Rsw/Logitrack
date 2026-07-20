@@ -74,7 +74,12 @@ export const UsersTable = ({ page, search, searchTerm }: UsersTableProps) => {
                   </TableCell>
 
                   <TableCell className="flex items-center gap-4">
-                    <EditUserButton />
+                    <EditUserButton
+                      id={user.id}
+                      name={user.name}
+                      email={user.email}
+                      role={user.role}
+                    />
                     <DeleteUserButton />
                   </TableCell>
                 </TableRow>
@@ -111,7 +116,12 @@ export const UsersTable = ({ page, search, searchTerm }: UsersTableProps) => {
                   </TableCell>
 
                   <TableCell className="flex items-center gap-4">
-                    <EditUserButton />
+                    <EditUserButton
+                      id={user.id}
+                      name={user.name}
+                      email={user.email}
+                      role={user.role}
+                    />
                     <DeleteUserButton />
                   </TableCell>
                 </TableRow>
