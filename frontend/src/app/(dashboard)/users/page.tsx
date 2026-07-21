@@ -8,6 +8,7 @@ import {
   getSearchUsers,
   getUsersByPage,
 } from "@/lib/api/users/get-user";
+import { CreateUsersButton } from "./_components/create-users-button";
 
 interface UsersProps {
   searchParams: {
@@ -30,10 +31,12 @@ const Users = async ({ searchParams }: UsersProps) => {
         title="Usuários"
         description="Gerencie os usuários"
         data={mapUsersCards(users)}
-        hasButton={false}
+        hasButton={true}
         placeholder="Buscar Usuário"
         search={search ?? ""}
-      />
+      >
+        <CreateUsersButton currentUser={currentUser} />
+      </UsersHeader>
       <UserMain
         usersPage={usersPage ?? []}
         userSearch={usersSearch ?? []}

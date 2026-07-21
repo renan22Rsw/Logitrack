@@ -4,12 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService as PrismaService } from '../database/database.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto, CreateUserByAdminDto } from './dto/create-user.dto';
+import { UpdateUserByAdminDto, UpdateUserDto } from './dto/update-user.dto';
 import { User, AuditAction, AuditEntity } from '@prisma/client';
 
 import bcrypt from 'bcrypt';
 import { PaginatedUser } from '@/types/user';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -135,6 +136,50 @@ export class UsersService {
     });
   }
 
+  async createUserByAdmin(
+    data: CreateUserByAdminDto,
+  ): Promise<Omit<User, 'password'>> {
+    const { name, email, role } = data;
+
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (user) throw new BadRequestException('User already exists');
+
+    return await this.prisma.$transaction(async (tx) => {
+      const temporaryPassword = randomBytes(12).toString('hex');
+      const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+      const newUser = await tx.user.create({
+        data: {
+          name,
+          email,
+          role,
+          password: hashedPassword, //Senha deve ser enviada para o usuário (implementar depois essa funcionalidade!);
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
+      });
+      await tx.auditLog.create({
+        data: {
+          userId: newUser.id,
+          action: AuditAction.CREATE,
+          entity: AuditEntity.USER,
+          entityId: newUser.id,
+          description: `Administrador criou o usuário ${newUser.name}`,
+        },
+      });
+
+      return newUser;
+    });
+  }
+
   async updateUser(
     data: UpdateUserDto,
     id: string,
@@ -183,6 +228,61 @@ export class UsersService {
           entity: AuditEntity.USER,
           entityId: updatedUser.id,
           description: 'Usuário atualizou seu perfil',
+        },
+      });
+
+      return updatedUser;
+    });
+  }
+
+  async updateUserByAdmin(
+    data: UpdateUserByAdminDto,
+    id: string,
+  ): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (data.email) {
+      const existingEmail = await this.prisma.user.findUnique({
+        where: {
+          email: data.email,
+        },
+      });
+
+      if (existingEmail && existingEmail.id !== id) {
+        throw new BadRequestException('Email já em uso');
+      }
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const updatedUser = await tx.user.update({
+        where: { id },
+        data: {
+          ...data,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          deletedAt: true,
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          userId: updatedUser.id,
+          action: AuditAction.UPDATE,
+          entity: AuditEntity.USER,
+          entityId: updatedUser.id,
+          description: `Administrador atualizou o usuário ${updatedUser.name}`,
         },
       });
 

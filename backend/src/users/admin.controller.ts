@@ -15,8 +15,8 @@ import { User } from '@prisma/client';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { RolesGuard } from '@/users/roles.guard';
 import { Roles } from '@/users/roles.decorator';
-import { CreateUserDto } from '@/users/dto/create-user.dto';
-import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { CreateUserByAdminDto } from '@/users/dto/create-user.dto';
+import { UpdateUserByAdminDto } from '@/users/dto/update-user.dto';
 
 import { Role } from '@prisma/client';
 import { PaginatedUser } from '@/types/user';
@@ -43,19 +43,19 @@ export class AdminController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   async createUsers(
-    @Body(new ValidationPipe()) data: CreateUserDto,
+    @Body(new ValidationPipe()) data: CreateUserByAdminDto,
   ): Promise<Omit<User, 'password'>> {
-    return this.adminService.createUser(data);
+    return this.adminService.createUserByAdmin(data);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   async updateUser(
-    @Body(new ValidationPipe()) data: UpdateUserDto,
+    @Body(new ValidationPipe()) data: UpdateUserByAdminDto,
     @Param('id') id: string,
   ): Promise<Omit<User, 'password'>> {
-    return this.adminService.updateUser(data, id);
+    return this.adminService.updateUserByAdmin(data, id);
   }
 
   @Delete(':id')
