@@ -11,3 +11,5 @@ export const UserSchema = v.object({
 
   role: v.picklist(["ADMIN", "MANAGER", "OPERATOR"], "O papel é obrigatório"),
 });
+
+export const EditUserSchema = v.partial(UserSchema);

@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { UserSchema } from "@/schemas/user-schema";
+import { EditUserSchema } from "@/schemas/user-schema";
 import {
   Form,
   Field as FormischField,
@@ -62,7 +62,7 @@ export const EditUserButton = ({
   const router = useRouter();
 
   const form = useForm({
-    schema: UserSchema,
+    schema: EditUserSchema,
     initialInput: {
       name,
       email,
@@ -70,7 +70,7 @@ export const EditUserButton = ({
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof UserSchema> = async (output) => {
+  const handleSubmit: SubmitHandler<typeof EditUserSchema> = async (output) => {
     try {
       setIsLoading(true);
 
