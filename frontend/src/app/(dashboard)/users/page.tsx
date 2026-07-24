@@ -1,4 +1,3 @@
-// import { usersCards } from "@/utils/headers";
 import { mapUsersCards } from "@/adapters/users";
 import { ProductsHeader as UsersHeader } from "../products/_components/header";
 import { UserMain } from "./_components/main";

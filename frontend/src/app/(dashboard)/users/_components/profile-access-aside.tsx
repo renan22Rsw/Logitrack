@@ -1,35 +1,57 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, User, Users } from "lucide-react";
+import { Role, User as UserTypes } from "@/types/user";
+import { LucideIcon, Package, User, Users } from "lucide-react";
 
-export const UserProfileAccessAside = () => {
-  const profileAcess = [
+interface ProfileAccessItem {
+  role: Role;
+  label: string;
+  description: string;
+  quantity: number;
+  icon: LucideIcon;
+  color: string;
+  bgColor: string;
+}
+
+export const UserProfileAccessAside = ({ users }: { users: UserTypes[] }) => {
+  const adminUsers = users.filter((user) => user.role === "ADMIN").length;
+  const managerUsers = users.filter((user) => user.role === "MANAGER").length;
+  const operatorUser = users.filter((user) => user.role === "OPERATOR").length;
+
+  const PROFILE_ACCESS: ProfileAccessItem[] = [
     {
-      role: "Administrador",
+      label: "Administrador",
+      role: "ADMIN",
       description: "Acesso total ao sistema",
-      quantity: 1,
+      quantity: adminUsers,
       icon: Package,
       color: "#3B82F6",
       bgColor: "#BCD2FB",
     },
 
     {
-      role: "Gerente",
+      label: "Gerente",
+      role: "MANAGER",
       description: "Gerencia produtos e movimentações",
-      quantity: 5,
+      quantity: managerUsers,
       icon: Users,
       color: "#F59E0B",
       bgColor: "#FEF3C7",
     },
 
     {
-      role: "Operador",
+      label: "Operador",
+      role: "OPERATOR",
       description: "Opera movimentações e consulta",
-      quantity: 10,
+      quantity: operatorUser,
       icon: User,
       color: "#35A75D",
       bgColor: "#DCFCE7",
     },
   ];
+
+  const countUsers = (count: number) => {
+    return count > 1 ? `${count} Usuários` : `${count} Usuário`;
+  };
 
   return (
     <Card>
@@ -37,7 +59,7 @@ export const UserProfileAccessAside = () => {
         <CardTitle>Perfil de acesso</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {profileAcess.map((item, __index) => (
+        {PROFILE_ACCESS.map((item, __index) => (
           <div className="flex gap-2" key={__index}>
             <item.icon
               color={item.color}
@@ -48,7 +70,7 @@ export const UserProfileAccessAside = () => {
               <div className="flex items-center justify-between gap-2">
                 <h6 className="text-sm font-semibold">{item.role}</h6>
                 <p className="text-xs font-semibold">
-                  {item.quantity} usuarios
+                  {countUsers(item.quantity)}
                 </p>
               </div>
               <p className="text-muted-foreground text-xs">

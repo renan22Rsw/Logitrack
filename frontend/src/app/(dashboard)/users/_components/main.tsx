@@ -46,7 +46,7 @@ export const UserMain = ({
 
       <div className="space-y-4 xl:w-1/4">
         <UserActivityAside />
-        <UserProfileAccessAside />
+        <UserProfileAccessAside users={usersList} />
       </div>
     </div>
   );
