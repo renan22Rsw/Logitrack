@@ -11,16 +11,14 @@ export const profileSchema = v.object({
 
   role: v.string(),
 
-  phone: v.pipe(
-    v.string(),
-    v.regex(/^\d{3}-\d{3}-\d{4}$/, "Invalid phone number format."),
-    v.minLength(1, "Phone number is required."),
-  ),
-
-  about: v.pipe(
-    v.string(),
-    v.minLength(10, "A descrição deve ter no mínimo 10 caracteres"),
-    v.maxLength(100, "A descrição deve ter no máximo 100 caracteres"),
+  about: v.optional(
+    v.nullable(
+      v.pipe(
+        v.string(),
+        v.minLength(10, "A bio deve ter no mínimo 10 caracteres"),
+        v.maxLength(100, "A bio deve ter no máximo 100 caracteres"),
+      ),
+    ),
   ),
 });
 

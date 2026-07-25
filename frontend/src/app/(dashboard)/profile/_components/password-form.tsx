@@ -24,18 +24,26 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { profilePasswordSchema } from "@/schemas/profile-schema";
 
 import {
   Form,
   Field as FormischField,
+  reset,
   SubmitHandler,
   useForm,
 } from "@formisch/react";
 
 import { Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export const PasswordForm = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const form = useForm({
     schema: profilePasswordSchema,
     initialInput: {
@@ -44,11 +52,41 @@ export const PasswordForm = () => {
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof profilePasswordSchema> = (
+  const handleSubmit: SubmitHandler<typeof profilePasswordSchema> = async (
     output,
   ) => {
-    // Do something with the validated form values.
-    console.log(output);
+    try {
+      setIsLoading(true);
+      const { password } = output;
+
+      const response = await fetch("/api/users/me", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({ password: password }),
+
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Error ao alterar a senha do usuário");
+      }
+
+      toast.success("Senha alterada com sucesso", {
+        description: `Sua senha foi alterada com sucesso`,
+      });
+      router.refresh();
+      reset(form);
+    } catch (err) {
+      toast.error("Error ao Alterar senha", {
+        description:
+          err instanceof Error ? err.message : "Tente novamente mais tarde",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -138,7 +176,16 @@ export const PasswordForm = () => {
                 <DialogClose asChild>
                   <Button variant="outline">Cancelar</Button>
                 </DialogClose>
-                <Button type="submit">Salvar Alterações</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Spinner />
+                      Salvando...
+                    </>
+                  ) : (
+                    "Salvar alterações"
+                  )}
+                </Button>
               </DialogFooter>
             </Form>
           </DialogContent>

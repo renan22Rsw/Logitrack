@@ -1,12 +1,15 @@
+import { getCurrentUser } from "@/lib/api/users/get-user";
 import { ProfileHeader } from "./_components/header";
 import { ProfileMain } from "./_components/main";
 
-const Profile = () => {
+const Profile = async () => {
+  const user = await getCurrentUser();
+
   return (
     <>
       <div className="p-4">
         <ProfileHeader />
-        <ProfileMain />
+        <ProfileMain user={user ?? []} />
       </div>
     </>
   );

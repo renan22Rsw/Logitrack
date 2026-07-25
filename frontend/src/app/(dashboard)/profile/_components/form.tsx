@@ -16,27 +16,80 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { profileSchema } from "@/schemas/profile-schema";
+import { Role } from "@/types/user";
 import { Form, Field as FormischField, useForm } from "@formisch/react";
 import type { SubmitHandler } from "@formisch/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
-export const ProfileForm = () => {
+interface ProfileFormProps {
+  name: string;
+  email: string;
+  role: Role;
+  about: string;
+}
+
+export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const form = useForm({
     schema: profileSchema,
     initialInput: {
-      name: "John Doe",
-      email: "K0ZqI@example.com",
-      role: "administrator",
-      phone: "123-456-7890",
-      about: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      name,
+      email,
+      role,
+      about,
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof profileSchema> = (output) => {
-    // Do something with the validated form values.
-    console.log(output);
+  const handleSubmit: SubmitHandler<typeof profileSchema> = async (output) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch("/api/users/me", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(output),
+
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Error ao alterar a senha do usuário");
+      }
+
+      toast.success("Dados alterados com sucesso", {
+        description: `Seus dodos foram alterada com sucesso`,
+      });
+      router.refresh();
+    } catch (err) {
+      toast.error("Error ao alterar dados", {
+        description:
+          err instanceof Error ? err.message : "Tente novamente mais tarde",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const hasPermisson = role !== "ADMIN";
 
   return (
     <Card className="border shadow-sm">
@@ -104,46 +157,33 @@ export const ProfileForm = () => {
               {(field) => (
                 <Field data-invalid={field.errors !== null}>
                   <FieldLabel
-                    htmlFor="form-formisch-role"
+                    htmlFor="form-formisch-user-role"
                     className="text-muted-foreground"
                   >
-                    Cargo
+                    Cargo do usuário
                   </FieldLabel>
-                  <Input
-                    {...field.props}
-                    id="form-formisch-role"
-                    value={field.input ?? ""}
-                    aria-invalid={field.errors !== null}
-                    placeholder="Administrador"
-                    autoComplete="off"
-                  />
-                  {field.errors && (
-                    <FieldError
-                      errors={field.errors.map((message) => ({ message }))}
-                    />
-                  )}
-                </Field>
-              )}
-            </FormischField>
 
-            <FormischField of={form} path={["phone"]}>
-              {(field) => (
-                <Field data-invalid={field.errors !== null}>
-                  <FieldLabel
-                    htmlFor="form-formisch-role"
-                    className="text-muted-foreground"
+                  <Select
+                    value={field.input}
+                    onValueChange={(value: Role) => field.onChange(value)}
+                    disabled={hasPermisson}
                   >
-                    Telefone
-                  </FieldLabel>
-                  <Input
-                    {...field.props}
-                    id="form-formisch-role"
-                    value={field.input ?? ""}
-                    aria-invalid={field.errors !== null}
-                    placeholder="(00) 00000-0000"
-                    autoComplete="off"
-                    type="tel"
-                  />
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder="Selecione um cargo"
+                        defaultValue={role}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Cargos</SelectLabel>
+                        <SelectItem value="ADMIN">Administrador</SelectItem>
+                        <SelectItem value="MANAGER">Gerente</SelectItem>
+                        <SelectItem value="OPERATOR">Operador</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+
                   {field.errors && (
                     <FieldError
                       errors={field.errors.map((message) => ({ message }))}
@@ -168,7 +208,7 @@ export const ProfileForm = () => {
                       id="form-formisch-about"
                       value={field.input ?? ""}
                       aria-invalid={field.errors !== null}
-                      placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                      placeholder="Adicione sua bio..."
                       autoComplete="off"
                       rows={6}
                       className="resize-none"
@@ -186,7 +226,16 @@ export const ProfileForm = () => {
         </CardContent>
 
         <CardFooter className="flex justify-end border-none bg-white">
-          <Button type="submit">Salvar Alterações</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Spinner />
+                Salvando...
+              </>
+            ) : (
+              "Salvar Alterações"
+            )}
+          </Button>
         </CardFooter>
       </Form>
     </Card>

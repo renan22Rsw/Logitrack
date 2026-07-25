@@ -12,13 +12,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   name      String?
-  role      Role     @default(OPERATOR)
+  role      Role      @default(OPERATOR)
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  about     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   movements     StockMovement[]
@@ -81,14 +82,14 @@ model RefreshToken {
 }
 
 model AuditLog {
-  id String @id @default(cuid())
-  action AuditAction
-  entity AuditEntity
-  entityId String
+  id          String      @id @default(cuid())
+  action      AuditAction
+  entity      AuditEntity
+  entityId    String
   description String?
-  userId String
-  
-  user   User   @relation(fields: [userId], references: [id])
+  userId      String
+
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 
   @@index([userId])
