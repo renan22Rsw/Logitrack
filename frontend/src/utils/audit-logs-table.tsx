@@ -28,43 +28,43 @@ export const auditLogsRoles = (role: string) => {
 
 export const auditLogsActions = (action: string) => {
   switch (action) {
-    case "Stock_In":
+    case "STOCK_IN":
       return (
         <Badge className="bg-green-200 text-green-600">
           {action.toUpperCase()}
         </Badge>
       );
 
-    case "Stock_Out":
+    case "STOCK_OUT":
       return (
         <Badge className="bg-red-200 text-red-600">
           {action.toUpperCase()}
         </Badge>
       );
 
-    case "Create":
+    case "CREATE":
       return (
         <Badge className="bg-green-200 text-green-600">
           {action.toUpperCase()}
         </Badge>
       );
 
-    case "Update":
+    case "UPDATE":
       return (
         <Badge className="bg-blue-200 text-blue-600">
           {action.toUpperCase()}
         </Badge>
       );
 
-    case "Delete":
+    case "DELETE":
       return (
         <Badge className="bg-red-200 text-red-600">
           {action.toUpperCase()}
         </Badge>
       );
 
-    case "Login":
-    case "Logout":
+    case "LOGIN":
+    case "LOGOUT":
       return (
         <Badge className="bg-gray-200 text-gray-600">
           {action.toUpperCase()}
@@ -78,7 +78,7 @@ export const auditLogsActions = (action: string) => {
 
 export const auditLogsEntities = (entity: string) => {
   switch (entity) {
-    case "Produto":
+    case "PRODUCT":
       return (
         <Package
           size={32}
@@ -86,7 +86,7 @@ export const auditLogsEntities = (entity: string) => {
         />
       );
 
-    case "Usuário":
+    case "USER":
       return (
         <Users
           size={32}
@@ -94,7 +94,7 @@ export const auditLogsEntities = (entity: string) => {
         />
       );
 
-    case "Movimentação":
+    case "MOVEMENT":
       return (
         <GitCompare
           size={32}
@@ -102,7 +102,7 @@ export const auditLogsEntities = (entity: string) => {
         />
       );
 
-    case "Sistema":
+    case "AUTH":
       return (
         <Settings
           size={32}

@@ -1,5 +1,6 @@
+"use client";
+
 import { Card, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -7,8 +8,42 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { InputSearch } from "../../products/_components/input-search";
+import { Role } from "@/types/user";
+import { ACTION, ENTITY } from "@/types/audit-logs";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export const AuditLogHeader = () => {
+interface AuditHeaderProps {
+  search: string;
+  roles: Role;
+  actions: ACTION;
+  entities: ENTITY;
+}
+
+export const AuditLogHeader = ({
+  search,
+  roles,
+  actions,
+  entities,
+}: AuditHeaderProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const updateParam = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (!value || value === "ALL") {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+
+    params.delete("page");
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return (
     <header className="px-6 py-8">
       <h1 className="text-xl font-bold xl:text-2xl">Audit Log</h1>
@@ -20,13 +55,16 @@ export const AuditLogHeader = () => {
         <Card>
           <CardHeader className="grid grid-cols-2 items-center gap-4 xl:flex">
             <div className="col-span-2">
-              <Input
+              <InputSearch
+                initialSearch={search}
                 placeholder="Buscar por usuário"
-                className="placeholder:text-xs xl:max-w-80"
               />
             </div>
 
-            <Select>
+            <Select
+              defaultValue={roles || "ALL"}
+              onValueChange={(value) => updateParam("role", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Todos os Usuários" />
               </SelectTrigger>
@@ -39,7 +77,10 @@ export const AuditLogHeader = () => {
               </SelectContent>
             </Select>
 
-            <Select>
+            <Select
+              defaultValue={actions || "ALL"}
+              onValueChange={(value) => updateParam("action", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Todos as Ações" />
               </SelectTrigger>
@@ -52,7 +93,10 @@ export const AuditLogHeader = () => {
               </SelectContent>
             </Select>
 
-            <Select>
+            <Select
+              defaultValue={entities || "ALL"}
+              onValueChange={(value) => updateParam("entity", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Todos as Entidades" />
               </SelectTrigger>
@@ -62,7 +106,7 @@ export const AuditLogHeader = () => {
                 <SelectItem value="PRODUCT">Produto</SelectItem>
                 <SelectItem value="MOVEMENT">Movimentação</SelectItem>
                 <SelectItem value="USER">Usuário</SelectItem>
-                <SelectItem value="SYSTEM">Sistema</SelectItem>
+                <SelectItem value="AUTH">Sistema</SelectItem>
               </SelectContent>
             </Select>
           </CardHeader>

@@ -1,3 +1,6 @@
+import { PaginatedResponse } from "@/generics/response";
+import { User } from "./user";
+
 export interface AuditLogs {
   id: string;
   action: ACTION;
@@ -6,7 +9,11 @@ export interface AuditLogs {
   description: string;
   userId: string;
   createdAt: Date;
+
+  user: User;
 }
+
+export type AuditLogsByPage = PaginatedResponse<AuditLogs>;
 
 export type ACTION =
   | "CREATE"

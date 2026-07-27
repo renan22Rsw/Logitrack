@@ -21,90 +21,21 @@ import {
   auditLogsEntities,
   auditLogsRoles,
 } from "@/utils/audit-logs-table";
+import { AuditLogs, AuditLogsByPage } from "@/types/audit-logs";
+import { formatDate } from "@/utils/format-date";
 
-export const AuditLogTable = () => {
-  const auditLogs = [
-    {
-      date: "2024-05-30 09:15",
-      user: "Helena",
-      role: "OPERATOR",
-      action: "Stock_In",
-      entity: "Movimentação",
-      description: "Entrada de 100 unidades do produto X no estoque.",
-    },
+interface AuditLogsTableProps {
+  page: AuditLogsByPage;
+  search: AuditLogs[];
+  searchTerm?: string;
+}
 
-    {
-      date: "2024-05-30 09:20",
-      user: "Maria",
-      role: "MANAGER",
-      action: "Stock_Out",
-      entity: "Movimentação",
-      description: "Entrada de 100 unidades do produto X no estoque.",
-    },
-
-    {
-      date: "2024-05-30 09:15",
-      user: "John Doe",
-      role: "ADMIN",
-      action: "Create",
-      entity: "Produto",
-      description: "Um novo produto foi criado.",
-    },
-
-    {
-      date: "2024-05-30 10:02",
-      user: "Carlos",
-      role: "MANAGER",
-      action: "Update",
-      entity: "Produto",
-      description: "Os detalhes de preço do produto foram atualizados.",
-    },
-
-    {
-      date: "2024-05-30 11:20",
-      user: "Paulo",
-      role: "OPERATOR",
-      action: "Delete",
-      entity: "Produto",
-      description: "Um produto foi removido do estoque.",
-    },
-
-    {
-      date: "2024-05-30 12:45",
-      user: "Roberto",
-      role: "MANAGER",
-      action: "Create",
-      entity: "Usuário",
-      description: "Uma nova conta de usuário foi criada.",
-    },
-
-    {
-      date: "2024-05-30 13:30",
-      user: "Emily",
-      role: "ADMIN",
-      action: "Login",
-      entity: "Sistema",
-      description: "O usuário entrou no sistema.",
-    },
-
-    {
-      date: "2024-05-30 14:05",
-      user: "John Doe",
-      role: "OPERATOR",
-      action: "Delete",
-      entity: "Usuário",
-      description: "Uma conta de usuário foi excluída.",
-    },
-
-    {
-      date: "2024-05-30 14:05",
-      user: "John Doe",
-      role: "OPERATOR",
-      action: "Logout",
-      entity: "Sistema",
-      description: "O usuário saiu do sistema.",
-    },
-  ];
+export const AuditLogTable = ({
+  page,
+  search,
+  searchTerm,
+}: AuditLogsTableProps) => {
+  const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
 
   return (
     <Card>
@@ -123,32 +54,75 @@ export const AuditLogTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {auditLogs.map((log, __index) => (
-              <TableRow key={__index}>
-                <TableCell className="text-muted-foreground">
-                  {log.date}
-                </TableCell>
-                <TableCell className="flex items-center gap-2">
-                  <Avatar>
-                    <AvatarFallback>{log.user.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  {log.user}
-                  {auditLogsRoles(log.role)}
-                </TableCell>
-                <TableCell>{auditLogsActions(log.action)}</TableCell>
+            {!hasSearch ? (
+              page.data.map((auditLog) => (
+                <TableRow key={auditLog.id}>
+                  <TableCell className="text-muted-foreground">
+                    {formatDate(auditLog.createdAt)}
+                  </TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    <Avatar>
+                      <AvatarFallback>
+                        {auditLog.user.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {auditLog.user.name}
+                    {auditLogsRoles(auditLog.user.role)}
+                  </TableCell>
+                  <TableCell>{auditLogsActions(auditLog.action)}</TableCell>
 
-                <TableCell>{auditLogsEntities(log.entity)}</TableCell>
+                  <TableCell>{auditLogsEntities(auditLog.entity)}</TableCell>
 
-                <TableCell className="text-muted-foreground">
-                  {log.description}
+                  <TableCell className="text-muted-foreground">
+                    {auditLog.description}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : search.length > 0 ? (
+              search.map((auditLog) => (
+                <TableRow key={auditLog.id}>
+                  <TableCell className="text-muted-foreground">
+                    {formatDate(auditLog.createdAt)}
+                  </TableCell>
+                  <TableCell className="flex items-center gap-2">
+                    <Avatar>
+                      <AvatarFallback>
+                        {auditLog.user.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {auditLog.user.name}
+                    {auditLogsRoles(auditLog.user.role)}
+                  </TableCell>
+                  <TableCell>{auditLogsActions(auditLog.action)}</TableCell>
+
+                  <TableCell>{auditLogsEntities(auditLog.entity)}</TableCell>
+
+                  <TableCell className="text-muted-foreground">
+                    {auditLog.description}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-muted-foreground h-24 text-center"
+                >
+                  Nenhum resultado encontrado.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>
-      <AuditLogPagination />
-      <CardFooter></CardFooter>
+      <CardFooter>
+        <span className="text-muted-foreground w-full text-sm font-semibold">
+          Mostrando {(page.meta.page - 1) * page.meta.limit + 1} a{" "}
+          {Math.min(page.meta.page * page.meta.limit, page.meta.total)} de{" "}
+          {page.meta.total} produtos
+        </span>
+      </CardFooter>
+      <AuditLogPagination meta={page.meta} />
     </Card>
   );
 };
