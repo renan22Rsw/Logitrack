@@ -6,4 +6,4 @@ export type User = {
   role: string;
 };
 
-export type PaginatedUser = PaginatedResponse<User[]>;
+export type PaginatedUsers = PaginatedResponse<User[]>;

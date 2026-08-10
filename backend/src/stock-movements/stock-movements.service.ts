@@ -7,7 +7,7 @@ import {
 import { DatabaseService as PrismaService } from '../database/database.service';
 import { CreateStockMovementDto } from './dto/create-stock-movements.dto';
 import { MovementType, Role, StockMovement } from '@prisma/client';
-import { FindAllStockMovementsResponse } from '@/types/stock-movements';
+import { StockMovementsPaginated } from '@/types/stock-movements';
 
 @Injectable()
 export class StockMovementsService {
@@ -71,7 +71,7 @@ export class StockMovementsService {
     type?: MovementType,
     productId?: string,
     userId?: string,
-  ): Promise<StockMovement[] | FindAllStockMovementsResponse> {
+  ): Promise<StockMovement[] | StockMovementsPaginated> {
     const where = {
       ...(productId && { productId }),
       ...(userId && { userId }),

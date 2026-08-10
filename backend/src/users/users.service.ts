@@ -9,7 +9,7 @@ import { UpdateUserByAdminDto, UpdateUserDto } from './dto/update-user.dto';
 import { User, AuditAction, AuditEntity } from '@prisma/client';
 
 import bcrypt from 'bcrypt';
-import { PaginatedUser } from '@/types/user';
+import { PaginatedUsers } from '@/types/user';
 import { randomBytes } from 'crypto';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class UsersService {
     search?: string,
     page?: number,
     limit?: number,
-  ): Promise<Omit<User, 'password'>[] | PaginatedUser> {
+  ): Promise<Omit<User, 'password'>[] | PaginatedUsers> {
     const where = {
       ...(search && {
         OR: [

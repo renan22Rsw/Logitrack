@@ -15,7 +15,7 @@ import {
   AuditAction,
   AuditEntity,
 } from '@prisma/client';
-import { FindAllProductsResponse } from '@/types/products';
+import { ProductsPaginated } from '@/types/products';
 
 @Injectable()
 export class ProductsService {
@@ -96,7 +96,7 @@ export class ProductsService {
     search?: string,
     page?: number,
     limit?: number,
-  ): Promise<Product[] | FindAllProductsResponse> {
+  ): Promise<Product[] | ProductsPaginated> {
     const where = {
       deletedAt: null,
 

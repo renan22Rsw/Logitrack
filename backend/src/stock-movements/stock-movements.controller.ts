@@ -15,7 +15,7 @@ import { Role, StockMovement, MovementType } from '@prisma/client';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { RolesGuard } from '@/users/roles.guard';
 import { Roles } from '@/users/roles.decorator';
-import { FindAllStockMovementsResponse } from '@/types/stock-movements';
+import { StockMovementsPaginated } from '@/types/stock-movements';
 
 @Controller('stock-movements')
 export class StockMovementsController {
@@ -44,7 +44,7 @@ export class StockMovementsController {
     @Query('type') type?: MovementType,
     @Query('productId') productId?: string,
     @Query('userId') userId?: string,
-  ): Promise<StockMovement[] | FindAllStockMovementsResponse> {
+  ): Promise<StockMovement[] | StockMovementsPaginated> {
     return this.stackMovementsService.getAllStockMovements(
       search,
       page ? Number(page) : undefined,

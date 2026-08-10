@@ -1,12 +1,4 @@
+import { PaginatedResponse } from '@/generics/paginated-response';
 import { Product } from '@prisma/client';
 
-export type FindAllProductsResponse = {
-  data: Product[];
-
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-};
+export type ProductsPaginated = PaginatedResponse<Product[]>;
