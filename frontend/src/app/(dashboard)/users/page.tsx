@@ -8,6 +8,7 @@ import {
   getUsersByPage,
 } from "@/lib/api/users/get-user";
 import { CreateUsersButton } from "./_components/create-users-button";
+import { getAllAuditLogs } from "@/lib/api/audit-logs/get-audit-logs";
 
 interface UsersProps {
   searchParams: {
@@ -23,6 +24,7 @@ const Users = async ({ searchParams }: UsersProps) => {
   const users = await getAllUsers();
   const usersSearch = await getSearchUsers(search);
   const usersPage = await getUsersByPage(page || 1);
+  const auditLogs = await getAllAuditLogs();
 
   return (
     <>
@@ -42,6 +44,7 @@ const Users = async ({ searchParams }: UsersProps) => {
         usersList={users ?? []}
         currentUser={currentUser}
         searchTerm={search}
+        auditLogs={auditLogs}
       />
     </>
   );

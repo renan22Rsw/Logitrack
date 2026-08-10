@@ -1,7 +1,9 @@
 import { Badge } from "@/components/ui/badge";
+import { ACTION, ENTITY } from "@/types/audit-logs";
+import { Role } from "@/types/user";
 import { GitCompare, Package, Settings, Users } from "lucide-react";
 
-export const auditLogsRoles = (role: string) => {
+export const auditLogsRoles = (role: Role) => {
   switch (role) {
     case "ADMIN":
       return (
@@ -26,7 +28,7 @@ export const auditLogsRoles = (role: string) => {
   }
 };
 
-export const auditLogsActions = (action: string) => {
+export const auditLogsActions = (action: ACTION) => {
   switch (action) {
     case "STOCK_IN":
       return (
@@ -76,7 +78,7 @@ export const auditLogsActions = (action: string) => {
   }
 };
 
-export const auditLogsEntities = (entity: string) => {
+export const auditLogsEntities = (entity: ENTITY) => {
   switch (entity) {
     case "PRODUCT":
       return (

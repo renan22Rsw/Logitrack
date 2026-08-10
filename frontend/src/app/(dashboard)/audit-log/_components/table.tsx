@@ -20,7 +20,7 @@ import {
   auditLogsActions,
   auditLogsEntities,
   auditLogsRoles,
-} from "@/utils/audit-logs-table";
+} from "@/utils/audit-logs";
 import { AuditLogs, AuditLogsByPage } from "@/types/audit-logs";
 import { formatDate } from "@/utils/format-date";
 

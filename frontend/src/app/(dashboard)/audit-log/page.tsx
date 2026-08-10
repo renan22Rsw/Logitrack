@@ -3,7 +3,7 @@ import { AuditLogHeader } from "./_components/header";
 import { AuditLogMain } from "./_components/main";
 import { Role } from "@/types/user";
 import {
-  getAllAuditLogs,
+  getAllAuditLogsList,
   getAuditLogsByPage,
   getSearchAuditLogs,
 } from "@/lib/api/audit-logs/get-audit-logs";
@@ -21,7 +21,7 @@ interface AuditLogsProps {
 const AuditLog = async ({ searchParams }: AuditLogsProps) => {
   const { search, page, action, entity, role } = await searchParams;
 
-  const auditLogs = await getAllAuditLogs(
+  const auditLogs = await getAllAuditLogsList(
     action ?? "",
     entity ?? "",
     role ?? "",

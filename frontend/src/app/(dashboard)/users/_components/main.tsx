@@ -6,6 +6,7 @@ import { UserActivityAside } from "./aside-activity";
 import { UserProfileAccessAside } from "./profile-access-aside";
 import { UsersList } from "./list";
 import { User, UsersByPage } from "@/types/user";
+import { AuditLogs } from "@/types/audit-logs";
 
 interface UserMainProps {
   usersPage: UsersByPage;
@@ -13,6 +14,7 @@ interface UserMainProps {
   userSearch: User[];
   currentUser: User;
   searchTerm: string;
+  auditLogs?: AuditLogs[];
 }
 
 export const UserMain = ({
@@ -21,6 +23,7 @@ export const UserMain = ({
   userSearch,
   currentUser,
   searchTerm,
+  auditLogs,
 }: UserMainProps) => {
   const isMobile = useIsMobile();
 
@@ -45,7 +48,7 @@ export const UserMain = ({
       )}
 
       <div className="space-y-4 xl:w-1/4">
-        <UserActivityAside />
+        <UserActivityAside auditLogs={auditLogs || []} />
         <UserProfileAccessAside users={usersList} />
       </div>
     </div>

@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AuditLogs } from "@/types/audit-logs";
-import { auditLogsActions, auditLogsRoles } from "@/utils/audit-logs-table";
+import { auditLogsActions, auditLogsRoles } from "@/utils/audit-logs";
 import { formatDate } from "@/utils/format-date";
 import { useState } from "react";
 

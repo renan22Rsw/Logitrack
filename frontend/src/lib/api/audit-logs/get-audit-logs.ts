@@ -2,7 +2,10 @@ import { AuditLogsByPage, ACTION, ENTITY, AuditLogs } from "@/types/audit-logs";
 import { fetchApi } from "../api";
 import { Role } from "@/types/user";
 
-export const getAllAuditLogs = (
+export const getAllAuditLogs = (): Promise<AuditLogs[]> =>
+  fetchApi<AuditLogs[]>("/audit-logs");
+
+export const getAllAuditLogsList = (
   action?: ACTION,
   entity?: ENTITY,
   role?: Role,
