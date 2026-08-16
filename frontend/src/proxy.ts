@@ -37,7 +37,7 @@ async function tryRefresh(request: NextRequest) {
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const token = request.cookies.get("access_token")?.value;
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
