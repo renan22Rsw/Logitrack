@@ -31,8 +31,15 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { User } from "@/types/user";
 
-export const CreateProductButton = () => {
+interface CreateProductButtonProps {
+  currentUser: User;
+}
+
+export const CreateProductButton = ({
+  currentUser,
+}: CreateProductButtonProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -68,16 +75,14 @@ export const CreateProductButton = () => {
         );
       }
 
-      toast("Produto criado", {
+      toast.success("Produto criado", {
         description: "Seu produto foi criado com sucesso",
       });
 
       router.refresh();
       reset(form);
     } catch (err) {
-      console.log(err);
-
-      toast("Erro ao criar produto", {
+      toast.error("Erro ao criar produto", {
         description:
           err instanceof Error ? err.message : "Tente novamente mais tarde",
       });
@@ -86,10 +91,12 @@ export const CreateProductButton = () => {
     }
   };
 
+  const hasPermisson = currentUser.role !== "ADMIN";
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" disabled={hasPermisson}>
           <Plus className="size-4" />
           Novo Produto
         </Button>

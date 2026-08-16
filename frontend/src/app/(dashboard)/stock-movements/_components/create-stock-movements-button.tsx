@@ -43,13 +43,16 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Products } from "@/types/products";
+import { User } from "@/types/user";
 
 interface CreateStockMovementsButtonProps {
   products: Products[];
+  currentUser: User;
 }
 
 export const CreateStockMovementsButton = ({
   products,
+  currentUser,
 }: CreateStockMovementsButtonProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -94,8 +97,6 @@ export const CreateStockMovementsButton = ({
       router.refresh();
       reset(form);
     } catch (err) {
-      console.log(err);
-
       toast.error("Erro ao criar movimentação", {
         description:
           err instanceof Error ? err.message : "Tente novamente mais tarde",
@@ -104,9 +105,12 @@ export const CreateStockMovementsButton = ({
       setIsLoading(false);
     }
   };
+
+  const hasPermisson = currentUser.role !== "ADMIN";
+
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild disabled={hasPermisson}>
         <Button className="flex items-center gap-2">
           <Plus className="size-4" />
           Nova Movimentação

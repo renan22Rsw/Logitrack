@@ -107,8 +107,10 @@ export const EditUserButton = ({
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Pencil className="h-4 w-4" />
+      <DialogTrigger asChild disabled={hasPermisson}>
+        <Button variant="outline" className="border-none">
+          <Pencil className="h-4 w-4" />
+        </Button>
       </DialogTrigger>
 
       <DialogContent>
@@ -135,7 +137,6 @@ export const EditUserButton = ({
                     aria-invalid={field.errors !== null}
                     placeholder="Nome de usuário"
                     autoComplete="off"
-                    disabled={hasPermisson}
                   />
                   {field.errors && (
                     <FieldError
@@ -163,7 +164,6 @@ export const EditUserButton = ({
                     placeholder="E-mail"
                     autoComplete="off"
                     type="email"
-                    disabled={hasPermisson}
                   />
                   {field.errors && (
                     <FieldError
@@ -187,7 +187,6 @@ export const EditUserButton = ({
                   <Select
                     value={field.input}
                     onValueChange={(value: Role) => field.onChange(value)}
-                    disabled={hasPermisson}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um cargo" />
@@ -217,7 +216,7 @@ export const EditUserButton = ({
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
 
-            <Button type="submit" disabled={isLoading || hasPermisson}>
+            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Spinner />

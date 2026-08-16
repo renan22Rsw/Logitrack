@@ -15,17 +15,21 @@ import { Products } from "@/types/products";
 import { useState } from "react";
 import { EditProductButton } from "./edit-product-button";
 import { DeleteProductButton } from "./delete-product-button";
+import { User } from "@/types/user";
 
 interface ProductListProps {
   products: Products[];
   search: Products[];
   searchTerm?: string;
+
+  user: User;
 }
 
 export const ProductList = ({
   products,
   search,
   searchTerm,
+  user,
 }: ProductListProps) => {
   const ITEMS_PER_PAGE = 10;
   const [visibleCount, setVisibleCount] = useState<number>(ITEMS_PER_PAGE);
@@ -84,8 +88,9 @@ export const ProductList = ({
                     sku={product.sku}
                     description={product.description as string}
                     price={product.price}
+                    currentUser={user}
                   />
-                  <DeleteProductButton id={product.id} />
+                  <DeleteProductButton id={product.id} currentUser={user} />
                 </div>
               </div>
             ))}

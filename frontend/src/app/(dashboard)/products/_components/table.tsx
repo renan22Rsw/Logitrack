@@ -16,17 +16,20 @@ import { ProductPagination } from "./pagination";
 import { DeleteProductButton } from "./delete-product-button";
 import { EditProductButton } from "./edit-product-button";
 import { Products, ProductsByPage } from "@/types/products";
+import { User } from "@/types/user";
 
 interface ProductsTableProps {
   page: ProductsByPage;
   search: Products[];
   searchTerm?: string;
+  user: User;
 }
 
 export const ProductTable = ({
   page,
   search,
   searchTerm,
+  user,
 }: ProductsTableProps) => {
   const hasSearch = searchTerm?.trim() !== "" && searchTerm !== undefined;
 
@@ -80,8 +83,9 @@ export const ProductTable = ({
                       sku={product.sku}
                       description={product.description as string}
                       price={product.price}
+                      currentUser={user}
                     />
-                    <DeleteProductButton id={product.id} />
+                    <DeleteProductButton id={product.id} currentUser={user} />
                   </TableCell>
                 </TableRow>
               ))
@@ -119,8 +123,9 @@ export const ProductTable = ({
                       sku={product.sku}
                       description={product.description as string}
                       price={product.price}
+                      currentUser={user}
                     />
-                    <DeleteProductButton id={product.id} />
+                    <DeleteProductButton id={product.id} currentUser={user} />
                   </TableCell>
                 </TableRow>
               ))

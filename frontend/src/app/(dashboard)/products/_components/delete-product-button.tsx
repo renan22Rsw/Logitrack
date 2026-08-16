@@ -17,12 +17,18 @@ import { useState } from "react";
 
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { User } from "@/types/user";
+import { Button } from "@/components/ui/button";
 
 interface DeleteProductProps {
+  currentUser: User;
   id: string;
 }
 
-export const DeleteProductButton = ({ id }: DeleteProductProps) => {
+export const DeleteProductButton = ({
+  id,
+  currentUser,
+}: DeleteProductProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -53,10 +59,14 @@ export const DeleteProductButton = ({ id }: DeleteProductProps) => {
     }
   };
 
+  const hasPermisson = currentUser.role !== "ADMIN";
+
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Trash2 className="h-4 w-4 cursor-pointer" color="red" />
+      <AlertDialogTrigger asChild disabled={hasPermisson}>
+        <Button variant="outline" className="border-none">
+          <Trash2 className="h-4 w-4" color="red" />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

@@ -31,6 +31,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
+import { User } from "@/types/user";
 
 interface EditProductsButtonProps {
   id: string;
@@ -38,6 +39,8 @@ interface EditProductsButtonProps {
   sku: string;
   description: string;
   price: number;
+
+  currentUser: User;
 }
 
 export const EditProductButton = ({
@@ -46,6 +49,7 @@ export const EditProductButton = ({
   sku,
   description,
   price,
+  currentUser,
 }: EditProductsButtonProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -78,13 +82,13 @@ export const EditProductButton = ({
         throw new Error("Erro ao editar produto");
       }
 
-      toast("Produto editado", {
+      toast.success("Produto editado", {
         description: "Seu produto foi editado com sucesso",
       });
 
       router.refresh();
     } catch (err) {
-      toast("Erro ao editar produto", {
+      toast.error("Erro ao editar produto", {
         description:
           err instanceof Error ? err.message : "Tente novamente mais tarde",
       });
@@ -93,10 +97,14 @@ export const EditProductButton = ({
     }
   };
 
+  const hasPermisson = currentUser.role !== "ADMIN";
+
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Pencil className="h-4 w-4" />
+      <DialogTrigger asChild disabled={hasPermisson}>
+        <Button variant="outline" className="border-none">
+          <Pencil className="h-4 w-4" />
+        </Button>
       </DialogTrigger>
 
       <DialogContent>

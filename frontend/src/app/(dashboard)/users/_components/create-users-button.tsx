@@ -97,7 +97,7 @@ export const CreateUsersButton = ({ currentUser }: CreateUsersButtonProps) => {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild disabled={hasPermisson}>
         <Button className="flex items-center gap-2">
           <Plus className="size-4" />
           Novo Usuário
@@ -130,7 +130,6 @@ export const CreateUsersButton = ({ currentUser }: CreateUsersButtonProps) => {
                     aria-invalid={field.errors !== null}
                     placeholder="Nome de usuário"
                     autoComplete="off"
-                    disabled={hasPermisson}
                   />
                   {field.errors && (
                     <FieldError
@@ -158,7 +157,6 @@ export const CreateUsersButton = ({ currentUser }: CreateUsersButtonProps) => {
                     placeholder="E-mail"
                     autoComplete="off"
                     type="email"
-                    disabled={hasPermisson}
                   />
                   {field.errors && (
                     <FieldError
@@ -182,7 +180,6 @@ export const CreateUsersButton = ({ currentUser }: CreateUsersButtonProps) => {
                   <Select
                     value={field.input}
                     onValueChange={(value: Role) => field.onChange(value)}
-                    disabled={hasPermisson}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um cargo" />
@@ -212,7 +209,7 @@ export const CreateUsersButton = ({ currentUser }: CreateUsersButtonProps) => {
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
 
-            <Button type="submit" disabled={isLoading || hasPermisson}>
+            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Spinner />

@@ -36,13 +36,13 @@ const Users = async ({ searchParams }: UsersProps) => {
         placeholder="Buscar Usuário"
         search={search ?? ""}
       >
-        <CreateUsersButton currentUser={currentUser} />
+        <CreateUsersButton currentUser={currentUser ?? null} />
       </UsersHeader>
       <UserMain
         usersPage={usersPage ?? []}
         userSearch={usersSearch ?? []}
         usersList={users ?? []}
-        currentUser={currentUser}
+        currentUser={currentUser ?? null}
         searchTerm={search}
         auditLogs={auditLogs}
       />

@@ -9,6 +9,7 @@ import {
 import { mapStockMovementsCards } from "@/adapters/stock-movements";
 import { CreateStockMovementsButton } from "./_components/create-stock-movements-button";
 import { getProducts } from "@/lib/api/products/get-products";
+import { getCurrentUser } from "@/lib/api/users/get-user";
 
 interface StockMovementsProps {
   searchParams: {
@@ -27,6 +28,8 @@ const StockMovements = async ({ searchParams }: StockMovementsProps) => {
 
   const products = await getProducts();
 
+  const user = await getCurrentUser();
+
   return (
     <>
       <StockMovementsHeader
@@ -37,7 +40,10 @@ const StockMovements = async ({ searchParams }: StockMovementsProps) => {
         data={mapStockMovementsCards(stockMovements ?? [])}
         placeholder="Busque por movimentações"
       >
-        <CreateStockMovementsButton products={products ?? []} />
+        <CreateStockMovementsButton
+          products={products ?? []}
+          currentUser={user ?? null}
+        />
       </StockMovementsHeader>
 
       <StockMovementsMain

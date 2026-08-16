@@ -8,6 +8,7 @@ import {
   getSearchProducts,
 } from "@/lib/api/products/get-products";
 import { CreateProductButton } from "./_components/create-product-button";
+import { getCurrentUser } from "@/lib/api/users/get-user";
 
 interface ProductsProps {
   searchParams: {
@@ -23,6 +24,7 @@ const Products = async ({ searchParams }: ProductsProps) => {
   const productsSearch = await getSearchProducts(search);
 
   const productsPage = await getProductsByPage(page || 1);
+  const user = await getCurrentUser();
 
   return (
     <>
@@ -34,7 +36,7 @@ const Products = async ({ searchParams }: ProductsProps) => {
         placeholder="Buscar Produtos"
         search={search}
       >
-        <CreateProductButton />
+        <CreateProductButton currentUser={user} />
       </ProductsHeader>
 
       <ProductContainer>
@@ -42,6 +44,7 @@ const Products = async ({ searchParams }: ProductsProps) => {
           productsPage={productsPage ?? []}
           productList={products ?? []}
           productSearch={productsSearch ?? []}
+          user={user ?? null}
           searchTerm={search}
         />
       </ProductContainer>

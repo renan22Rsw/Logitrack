@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { User } from "@/types/user";
 import { Trash2 } from "lucide-react";
@@ -26,8 +27,6 @@ interface DeleteUsersProps {
 export const DeleteUserButton = ({ id, currentUser }: DeleteUsersProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-
-  const hasPermission = currentUser.role !== "ADMIN";
 
   const handleDelete = async (id: string) => {
     try {
@@ -61,10 +60,18 @@ export const DeleteUserButton = ({ id, currentUser }: DeleteUsersProps) => {
     }
   };
 
+  const hasPermission = currentUser.role !== "ADMIN";
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Trash2 className="h-4 w-4 cursor-pointer" color="red" />
+        <Button
+          className="border-none"
+          variant="outline"
+          disabled={hasPermission}
+        >
+          <Trash2 className="h-4 w-4 cursor-pointer" color="red" />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -81,7 +88,7 @@ export const DeleteUserButton = ({ id, currentUser }: DeleteUsersProps) => {
 
           <AlertDialogAction
             onClick={() => handleDelete(id)}
-            disabled={isLoading || hasPermission}
+            disabled={isLoading}
           >
             {isLoading ? (
               <>

@@ -4,12 +4,14 @@ import { Products, ProductsByPage } from "@/types/products";
 import { ProductList } from "./list";
 import { ProductTable } from "./table";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { User } from "@/types/user";
 
 interface ProductsMainProps {
   productsPage: ProductsByPage;
   productList: Products[];
   productSearch: Products[];
   searchTerm: string;
+  user: User;
 }
 
 export const ProductMain = ({
@@ -17,6 +19,7 @@ export const ProductMain = ({
   productList,
   productSearch,
   searchTerm,
+  user,
 }: ProductsMainProps) => {
   const isMobile = useIsMobile();
 
@@ -24,12 +27,14 @@ export const ProductMain = ({
     <>
       {isMobile ? (
         <ProductList
+          user={user}
           products={productList}
           search={productSearch}
           searchTerm={searchTerm}
         />
       ) : (
         <ProductTable
+          user={user}
           page={productsPage}
           search={productSearch}
           searchTerm={searchTerm}
