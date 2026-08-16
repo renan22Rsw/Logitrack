@@ -1,11 +1,17 @@
+import { getProducts } from "@/lib/api/products/get-products";
 import { DashboardHeader } from "../_components/header";
-import { DashBoardSection } from "../_components/section";
+import { DashBoardMain } from "../_components/section";
+import { mapProductsCards } from "@/adapters/products";
+import { getStockMovements } from "@/lib/api/stock-movements/get-stock-movements";
 
-const DashBoard = () => {
+const DashBoard = async () => {
+  const products = await getProducts();
+  const stockMovements = await getStockMovements();
+
   return (
     <>
-      <DashboardHeader />
-      <DashBoardSection />
+      <DashboardHeader products={mapProductsCards(products)} />
+      <DashBoardMain stockMovements={stockMovements} products={products} />
     </>
   );
 };

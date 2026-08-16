@@ -14,11 +14,8 @@ import { useMemo } from "react";
 export const description = "A donut chart with text";
 
 import { Diamond } from "lucide-react";
+import { StockMovements, StockMovementType } from "@/types/stock-movements";
 
-const chartData = [
-  { movementType: "entrada", quantity: 89, fill: "#35A75D" },
-  { movementType: "saida", quantity: 67, fill: "#E45858" },
-];
 const chartConfig = {
   quantity: {
     label: "Quantidade",
@@ -33,10 +30,49 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const DonutChartCard = () => {
+interface DonutChartCardProps {
+  stockMovements: StockMovements[];
+}
+
+export const DonutChartCard = ({ stockMovements }: DonutChartCardProps) => {
+  const chartData = useMemo(() => {
+    const totals = stockMovements.reduce(
+      (acc, stockMovement) => {
+        if (stockMovement.type === "IN") {
+          acc.entrada += stockMovement.quantity ?? 0;
+        } else if (stockMovement.type === "OUT") {
+          acc.saida += stockMovement.quantity ?? 0;
+        }
+        return acc;
+      },
+      { entrada: 0, saida: 0 },
+    );
+
+    return [
+      {
+        movementType: "IN" as StockMovementType,
+        quantity: totals.entrada,
+        fill: "#35A75D",
+      },
+      {
+        movementType: "OUT" as StockMovementType,
+        quantity: totals.saida,
+        fill: "#E45858",
+      },
+    ];
+  }, [stockMovements]);
+
   const totalMovements = useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.quantity, 0);
-  }, []);
+  }, [chartData]);
+
+  const stockInPercentage = totalMovements
+    ? Math.round((chartData[0].quantity / totalMovements) * 100)
+    : 0;
+
+  const stockOutPercentage = totalMovements
+    ? Math.round((chartData[1].quantity / totalMovements) * 100)
+    : 0;
 
   return (
     <Card className="flex flex-col">
@@ -106,7 +142,9 @@ export const DonutChartCard = () => {
             </div>
             <p className="font-bold">
               {chartData[0].quantity}{" "}
-              <span className="text-muted-foreground">(57%)</span>
+              <span className="text-muted-foreground">
+                ({stockInPercentage}%)
+              </span>
             </p>
           </div>
 
@@ -123,7 +161,9 @@ export const DonutChartCard = () => {
             <p className="font-bold">
               {" "}
               {chartData[1].quantity}{" "}
-              <span className="text-muted-foreground">(43%)</span>
+              <span className="text-muted-foreground">
+                ({stockOutPercentage}%)
+              </span>
             </p>
           </div>
         </div>

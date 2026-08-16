@@ -18,4 +18,4 @@ export interface StockMovements {
 
 export type StockMovementsByPage = PaginatedResponse<StockMovements>;
 
-type StockMovementType = "IN" | "OUT";
+export type StockMovementType = "IN" | "OUT";

@@ -5,50 +5,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { StockMovements } from "@/types/stock-movements";
+import { formatDate } from "@/utils/format-date";
 import { ArrowUp, ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-const acitivityFeed = [
-  {
-    title: "Entrada de 20 unidades",
-    description: "Teclado Mecanico",
-    icon: ArrowUp,
-    iconColor: "#35A75D",
-    bgColor: "#DCFCE7",
-    author: "Joaquin",
-    date: "20/05/2023",
-  },
-  {
-    title: "Saida de 10 unidades",
-    description: "Mouse Gamer",
-    icon: ArrowDown,
-    iconColor: "#E45858",
-    bgColor: "#FCDAD6",
-    author: "Maria",
-    date: "21/05/2023",
-  },
-  {
-    title: "Entrada de 10 unidades",
-    description: "Mouse pad",
-    icon: ArrowUp,
-    iconColor: "#35A75D",
-    bgColor: "#DCFCE7",
-    author: "Renan",
-    date: "22/05/2023",
-  },
+interface ActivityFeedProps {
+  stockMovements: StockMovements[];
+}
 
-  {
-    title: "Saida de 5 unidades",
-    description: "Headset Gamer",
-    icon: ArrowDown,
-    iconColor: "#E45858",
-    bgColor: "#FCDAD6",
-    author: "Ana",
-    date: "23/05/2023",
-  },
-];
+export const AcitivityFeedCard = ({ stockMovements }: ActivityFeedProps) => {
+  const slicedActivitiesFeed = stockMovements.slice(0, 5);
 
-export const AcitivityFeedCard = () => {
   return (
     <Card>
       <CardHeader>
@@ -56,35 +24,53 @@ export const AcitivityFeedCard = () => {
       </CardHeader>
 
       <CardContent className="h-full py-6">
-        {acitivityFeed.map((activity, __index) => (
-          <div className="flex gap-4" key={__index}>
-            <div
-              className="flex h-10 w-10 items-center justify-center rounded-full"
-              style={{ backgroundColor: activity.bgColor }}
-            >
-              <activity.icon color={activity.iconColor} />
-            </div>
-            <div className="flex w-full justify-between space-y-2">
-              <div>
-                <h6 className="font-bold">{activity.title}</h6>
-                <p className="text-muted-foreground font-semibold">
-                  {activity.description}
-                </p>
-                <p className="text-muted-foreground">
-                  Por{" "}
-                  <span className="font-semibold text-blue-950/80">
-                    {activity.author}
-                  </span>
-                </p>
-              </div>
+        {slicedActivitiesFeed.length > 0 ? (
+          <>
+            {slicedActivitiesFeed.map((activity, __index) => (
+              <div className="flex gap-4" key={__index}>
+                {activity.type === "IN" ? (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#DCFCE7]">
+                    <ArrowUp color="green" size={24} />
+                  </div>
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FCDAD6]">
+                    <ArrowDown color="red" size={24} />
+                  </div>
+                )}
 
-              <span className="text-muted-foreground">{activity.date}</span>
-            </div>
-          </div>
-        ))}
+                <div className="flex w-full justify-between space-y-2">
+                  <div>
+                    <h6 className="font-bold">
+                      {activity.type === "IN"
+                        ? `Entrada de ${activity.quantity} unidades`
+                        : `Saida de ${activity.quantity} unidades`}
+                    </h6>
+                    <p className="text-muted-foreground font-semibold">
+                      {activity.product.name}
+                    </p>
+                    <p className="text-muted-foreground">
+                      Por{" "}
+                      <span className="font-semibold text-blue-950/80">
+                        {activity.user.name}
+                      </span>
+                    </p>
+                  </div>
+
+                  <span className="text-muted-foreground">
+                    {formatDate(activity.createdAt)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <p className="text-muted-foreground py-10 text-center text-lg font-medium">
+            Nenhuma movimentação encontrada.
+          </p>
+        )}
       </CardContent>
       <CardFooter className="bg-white">
-        <Link href={"#"}>
+        <Link href={"/stock-movements"}>
           <div className="flex items-center font-semibold text-blue-500">
             Ver todas as movimentações{" "}
             <ArrowRight size={16} className="mt-1 ml-2" />

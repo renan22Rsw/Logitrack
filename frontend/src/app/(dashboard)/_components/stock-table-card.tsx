@@ -15,46 +15,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { Products } from "@/types/products";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export const StockTableCard = () => {
-  const products = [
-    {
-      name: "Teclado Mecanico RGB",
-      sku: "TECL-RGB-001",
-      stock: 20,
-      status: "Ok",
-    },
+interface StockTableCardProps {
+  products: Products[];
+}
 
-    {
-      name: "Mouse Gamer",
-      sku: "MOUSE-GMR-001",
-      stock: 10,
-      status: "Baixo",
-    },
-
-    {
-      name: "Monitor 24 Full HD",
-      sku: "MON-24FHD-001",
-      stock: 25,
-      status: "Ok",
-    },
-
-    {
-      name: "Cabo HDMI 2m",
-      sku: "CAB-HDMI-2M-001",
-      stock: 2,
-      status: "Crítico",
-    },
-
-    {
-      name: "Headset Gamer 7.1",
-      sku: "HEAD-GMR-7.1-001",
-      stock: 22,
-      status: "Ok",
-    },
-  ];
+export const StockTableCard = ({ products }: StockTableCardProps) => {
+  const slicedProducts = products.slice(0, 8);
 
   return (
     <Card>
@@ -73,21 +43,26 @@ export const StockTableCard = () => {
           </TableHeader>
 
           <TableBody>
-            {products.map((product) => (
+            {slicedProducts.map((product) => (
               <TableRow key={product.sku}>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.sku}</TableCell>
-                <TableCell>{product.stock}</TableCell>
+                <TableCell>{product.currentStock}</TableCell>
                 <TableCell>
                   <Badge
                     className={cn(
-                      product.status === "Ok" && "bg-green-100 text-green-600",
-                      product.status === "Baixo" &&
+                      product.currentStock > 5 && "bg-green-100 text-green-600",
+                      product.currentStock <= 5 &&
+                        product.currentStock > 3 &&
                         "bg-amber-100 text-amber-600",
-                      product.status === "Crítico" && "bg-red-100 text-red-600",
+                      product.currentStock < 3 && "bg-red-100 text-red-600",
                     )}
                   >
-                    {product.status}
+                    {product.currentStock > 5 && "Ok"}
+                    {product.currentStock <= 5 &&
+                      product.currentStock > 3 &&
+                      "Baixo"}
+                    {product.currentStock < 3 && "Crítico"}
                   </Badge>
                 </TableCell>
               </TableRow>
@@ -97,7 +72,7 @@ export const StockTableCard = () => {
       </CardContent>
 
       <CardFooter className="flex h-full items-end border-none bg-white">
-        <Link href={"#"}>
+        <Link href={"/products"}>
           <div className="flex items-center font-semibold text-blue-500">
             Ver todos os produtos <ArrowRight size={16} className="mt-1 ml-2" />
           </div>
