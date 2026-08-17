@@ -11,10 +11,13 @@ import { User, AuditAction, AuditEntity } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { PaginatedUsers } from '@/types/user';
 import { randomBytes } from 'crypto';
-
+import { MailService } from '@/mail/mail.service';
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mailSerive: MailService,
+  ) {}
 
   async getUsers(
     search?: string,
@@ -182,6 +185,12 @@ export class UsersService {
         },
       });
 
+      await this.mailSerive.sendUserCreatedByAdminEmail(
+        newUser.email,
+        newUser.name as string,
+        temporaryPassword,
+      );
+
       return newUser;
     });
   }
@@ -293,6 +302,11 @@ export class UsersService {
           description: `Administrador atualizou o usuário ${updatedUser.name}`,
         },
       });
+
+      await this.mailSerive.sendUserUpdatedByAdminEmail(
+        updatedUser.email,
+        updatedUser.name as string,
+      );
 
       return updatedUser;
     });

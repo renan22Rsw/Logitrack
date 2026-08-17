@@ -8,6 +8,7 @@ import { StockMovementsModule } from './stock-movements/stock-movements.module';
 import { AuditLogsService } from './audit-logs/audit-logs.service';
 import { AuditLogsController } from './audit-logs/audit-logs.controller';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
     ProductsModule,
     StockMovementsModule,
     AuditLogsModule,
+    MailModule,
   ],
   providers: [DatabaseService, AuditLogsService],
   controllers: [AuditLogsController],
