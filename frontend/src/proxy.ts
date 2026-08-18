@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const PUBLIC_PATHS = ["/sign-in", "/sign-up"];
+// Rotas acessíveis sem estar autenticado
+const PUBLIC_PATHS = [
+  "/sign-in",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+];
+
+// Dessas, quais NÃO devem ser acessadas por quem já está autenticado
+const GUEST_ONLY_PATHS = ["/sign-in", "/sign-up"];
+
 const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 async function verifyToken(token: string) {
@@ -40,7 +50,9 @@ async function tryRefresh(request: NextRequest) {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const token = request.cookies.get("access_token")?.value;
+
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
+  const isGuestOnly = GUEST_ONLY_PATHS.some((p) => pathname.startsWith(p));
 
   const payload = token ? await verifyToken(token) : null;
   const isAuthenticated = !!payload;
@@ -57,7 +69,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
-  if (isAuthenticated && isPublic) {
+  if (isAuthenticated && isGuestOnly) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

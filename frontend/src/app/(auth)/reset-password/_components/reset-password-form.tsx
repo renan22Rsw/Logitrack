@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -8,82 +9,76 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { SignInSchema } from "@/schemas/auth-schema";
 import {
   SubmitHandler,
   useForm,
   Form,
   Field as FormischField,
 } from "@formisch/react";
-
-import { Mail, Lock, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Loader2, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { profilePasswordSchema as resetPasswordSchama } from "@/schemas/profile-schema";
 
-export const SignInForm = () => {
+export const ResetPasswordForm = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const router = useRouter();
 
   const form = useForm({
-    schema: SignInSchema,
+    schema: resetPasswordSchama,
     initialInput: {
-      email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const handleSubmit: SubmitHandler<typeof SignInSchema> = async (output) => {
+  const handleSubmit: SubmitHandler<typeof resetPasswordSchama> = async (
+    output,
+  ) => {
     setServerError(null);
-
     try {
-      const { email, password } = output;
-
-      const response = await fetch("/api/auth/sign-in", {
+      const { password } = output;
+      const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ password }),
         credentials: "include",
       });
-
       const data = await response.json();
 
       if (!response.ok) {
         setServerError(data.message ?? "Ocorreu um erro. Tente novamente.");
       }
-
       router.refresh();
     } catch (err) {
       setServerError("Não foi possível conectar ao servidor. Tente novamente.");
       console.log(err);
     }
   };
-
   return (
-    <Form of={form} onSubmit={handleSubmit} className="space-y-4">
+    <Form of={form} onSubmit={handleSubmit}>
       <FieldGroup>
-        <FormischField of={form} path={["email"]}>
+        <FormischField of={form} path={["password"]}>
           {(field) => (
             <Field data-invalid={field.errors !== null}>
               <FieldLabel
                 htmlFor="form-formisch-name"
                 className="text-muted-foreground"
               >
-                E-mail
+                Senha
               </FieldLabel>
               <div className="relative">
-                <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+                <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                 <Input
                   {...field.props}
                   id="form-formisch-name"
                   value={field.input ?? ""}
                   aria-invalid={field.errors !== null}
-                  placeholder="user@exmaple.com"
+                  placeholder="********"
                   autoComplete="off"
-                  type="email"
                   className="pl-10"
+                  type="password"
                 />
               </div>
               {field.errors && (
@@ -95,26 +90,26 @@ export const SignInForm = () => {
           )}
         </FormischField>
 
-        <FormischField of={form} path={["password"]}>
+        <FormischField of={form} path={["confirmPassword"]}>
           {(field) => (
             <Field data-invalid={field.errors !== null}>
               <FieldLabel
-                htmlFor="form-formisch-passwrord"
+                htmlFor="form-formisch-name"
                 className="text-muted-foreground"
               >
-                Senha
+                Confirme sua senha
               </FieldLabel>
               <div className="relative">
                 <Lock className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
                 <Input
                   {...field.props}
-                  id="form-formisch-passwrord"
+                  id="form-formisch-name"
                   value={field.input ?? ""}
                   aria-invalid={field.errors !== null}
                   placeholder="********"
                   autoComplete="off"
-                  type="password"
                   className="pl-10"
+                  type="password"
                 />
               </div>
               {field.errors && (
@@ -131,12 +126,6 @@ export const SignInForm = () => {
         <p className="text-destructive mt-2 text-sm">{serverError}</p>
       )}
 
-      <Link href={"/forgot-password"}>
-        <p className="text-muted-foreground hover:underline">
-          Esqueceu sua senha?
-        </p>
-      </Link>
-
       <div className="py-4">
         <Button
           type="submit"
@@ -146,10 +135,10 @@ export const SignInForm = () => {
           {form.isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Entrar
+              Criando nova senha...
             </>
           ) : (
-            "Entrar"
+            "Criar Senha"
           )}
         </Button>
       </div>

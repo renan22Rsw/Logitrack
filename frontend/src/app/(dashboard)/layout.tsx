@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Navbar } from "@/components/navbar";
 import { getCurrentUser } from "@/lib/api/users/get-user";
 import { Toaster } from "@/components/ui/sonner";
+import { redirect } from "next/navigation";
 
 export default async function DashBoardLayout({
   children,
@@ -11,6 +12,10 @@ export default async function DashBoardLayout({
   children: React.ReactNode;
 }>) {
   const user = await getCurrentUser();
+
+  if (user.mustChangePassword) {
+    redirect("/reset-password");
+  }
 
   return (
     <>

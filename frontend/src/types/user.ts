@@ -8,6 +8,7 @@ export interface User {
   email: string;
   role: Role;
   about?: string;
+  mustChangePassword: boolean;
   createdAt: Date;
   deletedAt: Date;
 
