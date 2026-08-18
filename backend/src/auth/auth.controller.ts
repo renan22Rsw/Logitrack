@@ -6,12 +6,15 @@ import {
   Response,
   UnauthorizedException,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 import type { FastifyRequest, FastifyReply } from 'fastify';
+import { ForgotPasswordDto } from '@/mail/dto/forgot-password-dto';
+import { ResetPasswordDto } from '@/mail/dto/reset-password-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -71,6 +74,20 @@ export class AuthController {
     });
 
     return { ok: true };
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body(new ValidationPipe()) user: ForgotPasswordDto) {
+    return this.authService.forgotPassowrd(user);
+  }
+
+  @Post('reset-password')
+  @UseGuards(JwtAuthGuard)
+  async resetPassword(
+    @Request() req: FastifyRequest,
+    @Body(new ValidationPipe()) user: ResetPasswordDto,
+  ) {
+    return this.authService.resetPassword(req.user.sub, user);
   }
 
   @UseGuards(JwtAuthGuard)

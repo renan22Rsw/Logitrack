@@ -1,5 +1,9 @@
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { DatabaseService as PrismaService } from '../database/database.service';
 
 import bcrypt from 'bcrypt';
@@ -7,12 +11,17 @@ import { User } from '@/types/user';
 import { JwtPayload } from '@/types/jwt-payload';
 
 import { AuditAction, AuditEntity } from '@prisma/client';
+import { randomBytes } from 'crypto';
+import { MailService } from '@/mail/mail.service';
+import { ResetPasswordDto } from '@/mail/dto/reset-password-dto';
+import { ForgotPasswordDto } from '@/mail/dto/forgot-password-dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly mailService: MailService,
   ) {}
 
   async validateUser(email: string, pass: string) {
@@ -116,6 +125,91 @@ export class AuthService {
     );
 
     return { acess_token: newAcessToken };
+  }
+
+  async forgotPassowrd(dto: ForgotPasswordDto) {
+    const { email } = dto;
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!existingUser) {
+      throw new BadRequestException('O usuário não existe');
+    }
+
+    const temporaryPassword = randomBytes(12).toString('hex');
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    const user = await this.prisma.user.update({
+      where: {
+        email: existingUser.email,
+      },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: true,
+      },
+
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        about: true,
+        mustChangePassword: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+      },
+    });
+
+    await this.mailService.sendForgotPasswordEmail(
+      user.email,
+      user.name as string,
+      temporaryPassword,
+    );
+
+    return { message: 'Cheque seu email, para ver as intruções' };
+  }
+
+  async resetPassword(userId: string, dto: ResetPasswordDto) {
+    const { password } = dto;
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      throw new BadRequestException('O usuário não existe');
+    }
+
+    if (!existingUser.mustChangePassword) {
+      throw new BadRequestException('user does not need to reset the password');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await this.prisma.user.update({
+      where: { email: existingUser.email },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: false,
+      },
+
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        about: true,
+        mustChangePassword: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+      },
+    });
+
+    return { message: 'Senha foi criada com sucesso' };
   }
 
   async logout(token: string, user: JwtPayload) {

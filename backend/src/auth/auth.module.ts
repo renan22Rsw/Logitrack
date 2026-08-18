@@ -5,9 +5,16 @@ import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
+import { MailService } from '../mail/mail.service';
 
 @Module({
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    PrismaService,
+    MailService,
+    LocalStrategy,
+    JwtStrategy,
+  ],
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -17,4 +24,3 @@ import { AuthController } from './auth.controller';
   controllers: [AuthController],
 })
 export class AuthModule {}
-

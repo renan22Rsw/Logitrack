@@ -20,6 +20,7 @@ model User {
   about     String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  mustChangePassword Boolean   @default(false)
   deletedAt DateTime?
 
   movements     StockMovement[]
