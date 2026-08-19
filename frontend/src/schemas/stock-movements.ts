@@ -1,5 +1,4 @@
 import * as v from "valibot";
-import { ProductSchema } from "./product-schema";
 
 export const stockMovementSchema = v.object({
   productId: v.string("Producto é obrigatório"),
