@@ -60,7 +60,7 @@ export const DeleteUserButton = ({ id, currentUser }: DeleteUsersProps) => {
     }
   };
 
-  const hasPermission = currentUser.role !== "ADMIN";
+  const hasPermission = currentUser.role === "ADMIN";
 
   return (
     <AlertDialog>
@@ -68,7 +68,7 @@ export const DeleteUserButton = ({ id, currentUser }: DeleteUsersProps) => {
         <Button
           className="border-none"
           variant="outline"
-          disabled={hasPermission}
+          disabled={!hasPermission}
         >
           <Trash2 className="h-4 w-4 cursor-pointer" color="red" />
         </Button>

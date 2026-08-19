@@ -89,7 +89,7 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
     }
   };
 
-  const hasPermisson = role !== "ADMIN";
+  const hasPermission = role === "ADMIN";
 
   return (
     <Card className="border shadow-sm">
@@ -166,7 +166,7 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
                   <Select
                     value={field.input}
                     onValueChange={(value: Role) => field.onChange(value)}
-                    disabled={hasPermisson}
+                    disabled={!hasPermission}
                   >
                     <SelectTrigger>
                       <SelectValue

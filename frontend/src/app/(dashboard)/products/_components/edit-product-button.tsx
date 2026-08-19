@@ -97,11 +97,12 @@ export const EditProductButton = ({
     }
   };
 
-  const hasPermisson = currentUser.role !== "ADMIN";
+  const hasPermission =
+    currentUser.role === "ADMIN" || currentUser.role === "MANAGER";
 
   return (
     <Dialog>
-      <DialogTrigger asChild disabled={hasPermisson}>
+      <DialogTrigger asChild disabled={!hasPermission}>
         <Button variant="outline" className="border-none">
           <Pencil className="h-4 w-4" />
         </Button>

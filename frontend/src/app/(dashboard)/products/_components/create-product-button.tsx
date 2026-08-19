@@ -90,13 +90,13 @@ export const CreateProductButton = ({
       setIsLoading(false);
     }
   };
-
-  const hasPermisson = currentUser.role !== "ADMIN";
+  const hasPermission =
+    currentUser.role === "ADMIN" || currentUser.role === "MANAGER";
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-2" disabled={hasPermisson}>
+        <Button className="flex items-center gap-2" disabled={!hasPermission}>
           <Plus className="size-4" />
           Novo Produto
         </Button>

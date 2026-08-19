@@ -59,11 +59,12 @@ export const DeleteProductButton = ({
     }
   };
 
-  const hasPermisson = currentUser.role !== "ADMIN";
+  const hasPermission =
+    currentUser.role === "ADMIN" || currentUser.role === "MANAGER";
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild disabled={hasPermisson}>
+      <AlertDialogTrigger asChild disabled={!hasPermission}>
         <Button variant="outline" className="border-none">
           <Trash2 className="h-4 w-4" color="red" />
         </Button>

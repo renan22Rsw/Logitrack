@@ -106,11 +106,12 @@ export const CreateStockMovementsButton = ({
     }
   };
 
-  const hasPermisson = currentUser.role !== "ADMIN";
+  const hasPermission =
+    currentUser.role === "ADMIN" || currentUser.role === "MANAGER";
 
   return (
     <Dialog>
-      <DialogTrigger asChild disabled={hasPermisson}>
+      <DialogTrigger asChild disabled={!hasPermission}>
         <Button className="flex items-center gap-2">
           <Plus className="size-4" />
           Nova Movimentação
