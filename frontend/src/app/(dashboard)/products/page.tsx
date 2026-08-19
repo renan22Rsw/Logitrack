@@ -21,7 +21,7 @@ const Products = async ({ searchParams }: ProductsProps) => {
   const { page, search } = await searchParams;
 
   const products = await getProducts();
-  const productsSearch = await getSearchProducts(search);
+  const productsSearch = search ? await getSearchProducts(search) : products;
 
   const productsPage = await getProductsByPage(page || 1);
   const user = await getCurrentUser();

@@ -22,7 +22,9 @@ const StockMovements = async ({ searchParams }: StockMovementsProps) => {
   const { search, page } = await searchParams;
 
   const stockMovements = await getStockMovements();
-  const stockMovementsSearch = await getSearchStockMovements(search);
+  const stockMovementsSearch = search
+    ? await getSearchStockMovements(search)
+    : stockMovements;
 
   const stockMovementsPage = await getStockMovementsByPage(page || 1);
 

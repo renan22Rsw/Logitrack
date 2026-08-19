@@ -135,8 +135,9 @@ export const ProductList = ({
                   sku={product.sku}
                   description={product.description as string}
                   price={product.price}
+                  currentUser={user}
                 />
-                <DeleteProductButton id={product.id} />
+                <DeleteProductButton id={product.id} currentUser={user} />
               </div>
             </div>
           ))

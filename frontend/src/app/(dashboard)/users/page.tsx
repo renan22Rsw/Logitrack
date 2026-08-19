@@ -22,7 +22,7 @@ const Users = async ({ searchParams }: UsersProps) => {
 
   const currentUser = await getCurrentUser();
   const users = await getAllUsers();
-  const usersSearch = await getSearchUsers(search);
+  const usersSearch = search ? await getSearchUsers(search) : users;
   const usersPage = await getUsersByPage(page || 1);
   const auditLogs = await getAllAuditLogs();
 
