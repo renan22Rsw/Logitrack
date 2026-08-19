@@ -13,7 +13,7 @@ export interface Products {
   createdAt: Date;
 }
 
-export type ProductsByPage = PaginatedResponse<Products>;
+export type ProductsByPage = PaginatedResponse<Products[]>;
 
 export interface ProductCard {
   title: string;

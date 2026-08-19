@@ -18,4 +18,4 @@ export interface User {
 
 export type Role = "ADMIN" | "MANAGER" | "OPERATOR";
 
-export type UsersByPage = PaginatedResponse<User>;
+export type UsersByPage = PaginatedResponse<User[]>;

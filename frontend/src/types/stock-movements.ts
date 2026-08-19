@@ -16,6 +16,6 @@ export interface StockMovements {
   user: User;
 }
 
-export type StockMovementsByPage = PaginatedResponse<StockMovements>;
+export type StockMovementsByPage = PaginatedResponse<StockMovements[]>;
 
 export type StockMovementType = "IN" | "OUT";

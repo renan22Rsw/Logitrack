@@ -13,7 +13,7 @@ export interface AuditLogs {
   user: User;
 }
 
-export type AuditLogsByPage = PaginatedResponse<AuditLogs>;
+export type AuditLogsByPage = PaginatedResponse<AuditLogs[]>;
 
 export type ACTION =
   | "CREATE"
