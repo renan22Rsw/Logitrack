@@ -31,7 +31,7 @@ export function mapProductsCards(products: Products[]) {
   const lastMonthProducts = products.filter(({ createdAt }) => {
     const date = new Date(createdAt);
 
-    const prevMonth = now.getDate() === 0 ? 11 : now.getMonth() - 1;
+    const prevMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
 
     const prevYear =
       now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
