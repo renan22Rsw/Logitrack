@@ -16,11 +16,14 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import { ForgotPasswordDto } from '@/mail/dto/forgot-password-dto';
 import { ResetPasswordDto } from '@/mail/dto/reset-password-dto';
 
+import { Throttle, ThrottlerGuard, seconds, minutes } from '@nestjs/throttler';
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(ThrottlerGuard, LocalAuthGuard)
+  @Throttle({ default: { limit: 6, ttl: seconds(60) } })
   @Post('sign-in')
   async login(
     @Request() req: FastifyRequest,
@@ -76,6 +79,8 @@ export class AuthController {
     return { ok: true };
   }
 
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 6, ttl: minutes(15) } })
   @Post('forgot-password')
   async forgotPassword(@Body(new ValidationPipe()) user: ForgotPasswordDto) {
     return this.authService.forgotPassowrd(user);
