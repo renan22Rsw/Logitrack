@@ -64,7 +64,7 @@ export class ProductsController {
   @Roles(Role.ADMIN, Role.MANAGER)
   updateProduct(
     @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
+    @Body(new ValidationPipe()) updateProductDto: UpdateProductDto,
     @Request() req: FastifyRequest,
   ): Promise<Product> {
     return this.productsService.updateProduct(
