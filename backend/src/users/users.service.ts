@@ -210,7 +210,7 @@ export class UsersService {
 
     const existingEmail = await this.prisma.user.findUnique({
       where: {
-        email: user.email,
+        email: data.email,
       },
     });
 
