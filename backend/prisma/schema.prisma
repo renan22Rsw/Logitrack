@@ -23,6 +23,8 @@ model User {
   mustChangePassword Boolean   @default(false)
   deletedAt DateTime?
 
+  isDemo Boolean @default(false)
+
   movements     StockMovement[]
   auditLogs     AuditLog[]
   refreshTokens RefreshToken[]

@@ -7,7 +7,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { DatabaseService } from '../database/database.service';
 import { MailService } from '@/mail/mail.service';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Role } from '@prisma/client';
 
 jest.mock('bcrypt', () => ({
@@ -153,6 +157,7 @@ describe('UsersService', () => {
           createdAt: true,
           updatedAt: true,
           deletedAt: true,
+          isDemo: true,
           movements: true,
           auditLogs: true,
         },
@@ -341,6 +346,18 @@ describe('UsersService', () => {
         service.updateUser({ email: 'ja-usado@test.com' }, 'user-1'),
       ).resolves.toEqual(existingUser); // não lança erro, mesmo tentando um email "duplicado"
     });
+
+    it('should throw ForbiddenException if user is a demo/guest account', async () => {
+      const demoUser = { id: 'user-1', email: 'guest@test.com', isDemo: true };
+
+      prisma.user.findUnique.mockResolvedValueOnce(demoUser);
+
+      await expect(
+        service.updateUser({ name: 'Novo Nome' }, 'user-1'),
+      ).rejects.toThrow(ForbiddenException);
+
+      expect(txMock.user.update).not.toHaveBeenCalled();
+    });
   });
 
   describe('updateUserByAdmin', () => {
@@ -449,6 +466,19 @@ describe('UsersService', () => {
         where: { id: 'user-1' },
         data: { deletedAt: expect.any(Date) },
       });
+    });
+
+    it('should throw ForbiddenException if user is a demo/guest account', async () => {
+      const demoUser = { id: 'user-1', email: 'guest@test.com', isDemo: true };
+
+      prisma.user.findUnique.mockResolvedValue(demoUser);
+
+      await expect(service.deleteUser('user-1')).rejects.toThrow(
+        ForbiddenException,
+      );
+
+      expect(prisma.auditLog.create).not.toHaveBeenCalled();
+      expect(prisma.user.update).not.toHaveBeenCalled();
     });
   });
 });

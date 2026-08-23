@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { DatabaseService as PrismaService } from '../database/database.service';
 import { CreateUserDto, CreateUserByAdminDto } from './dto/create-user.dto';
@@ -96,7 +97,7 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
-
+        isDemo: true,
         movements: true,
         auditLogs: true,
       },
@@ -130,6 +131,7 @@ export class UsersService {
           createdAt: true,
           updatedAt: true,
           deletedAt: true,
+          isDemo: true,
         },
       });
 
@@ -178,6 +180,7 @@ export class UsersService {
           createdAt: true,
           updatedAt: true,
           deletedAt: true,
+          isDemo: true,
         },
       });
       await tx.auditLog.create({
@@ -207,6 +210,10 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) throw new NotFoundException('User not found');
+
+    if (user.isDemo) {
+      throw new ForbiddenException('Demo account cannot be updated');
+    }
 
     const existingEmail = await this.prisma.user.findUnique({
       where: {
@@ -240,6 +247,7 @@ export class UsersService {
           createdAt: true,
           updatedAt: true,
           deletedAt: true,
+          isDemo: true,
         },
       });
 
@@ -297,6 +305,7 @@ export class UsersService {
           createdAt: true,
           updatedAt: true,
           deletedAt: true,
+          isDemo: true,
         },
       });
 
@@ -323,6 +332,10 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) throw new NotFoundException('User not found');
+
+    if (user.isDemo) {
+      throw new ForbiddenException('Demo account cannot be deleted');
+    }
 
     await this.prisma.auditLog.create({
       data: {
