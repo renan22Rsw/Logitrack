@@ -73,7 +73,7 @@ export const mapUsersCards = (users: User[]) => {
 
     {
       title: "Perfil de Acesso",
-      stock: 3,
+      stock: 4,
       description: `Perfil Cadastrado`,
       icon: Shield,
       color: "#8B5CF6",

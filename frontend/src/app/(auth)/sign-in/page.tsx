@@ -1,5 +1,6 @@
 import { AuthCard } from "../_components/auth-card";
 import { AuthContainer } from "../_components/auth-container";
+import { GuestSignInButton } from "./_components/guest-signIn-button";
 import { SignInForm } from "./_components/sign-in-form";
 
 const SignIn = () => {
@@ -12,6 +13,7 @@ const SignIn = () => {
         footerLink="/sign-up"
       >
         <SignInForm />
+        <GuestSignInButton />
       </AuthCard>
     </AuthContainer>
   );
