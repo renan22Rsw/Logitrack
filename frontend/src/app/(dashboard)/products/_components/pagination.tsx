@@ -25,7 +25,7 @@ export const ProductPagination = ({ meta }: ProductPaginationProps) => {
   };
 
   return (
-    <Pagination className="h-full">
+    <Pagination className="h-full py-4">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious

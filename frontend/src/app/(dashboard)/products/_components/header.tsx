@@ -1,13 +1,13 @@
+import { ProductCard } from "@/types/products";
 import { ProductCards } from "./cards";
 import { InputSearch } from "./input-search";
-import { ProductCardsTypes } from "@/types/products";
 import { ReactNode } from "react";
 
 interface ProductHeaderProps {
   title: string;
   description: string;
   hasButton: boolean;
-  data: ProductCardsTypes[];
+  data: ProductCard[];
   placeholder?: string;
   children?: ReactNode;
   search: string;

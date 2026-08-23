@@ -201,7 +201,7 @@ export const SignUpForm = () => {
           {form.isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Criando conta...
+              Crianddo conta
             </>
           ) : (
             "Criar Conta"

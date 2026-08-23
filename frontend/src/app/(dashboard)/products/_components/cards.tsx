@@ -1,20 +1,9 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideProps } from "lucide-react";
-import { ForwardRefExoticComponent, JSX, RefAttributes } from "react";
+import { ProductCard } from "@/types/products";
 
-type ProductCardsProps = {
-  products: {
-    title: string;
-    stock: number | string;
-    description: string;
-    arrowUp?: JSX.Element | null;
-    icon: ForwardRefExoticComponent<
-      Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-    >;
-    color: string;
-    bgColor: string;
-  }[];
-};
+export interface ProductCardsProps {
+  products: ProductCard[];
+}
 
 export const ProductCards = ({ products }: ProductCardsProps) => {
   return (
