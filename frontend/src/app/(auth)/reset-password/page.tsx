@@ -6,6 +6,10 @@ import { redirect } from "next/navigation";
 const ResetPassword = async () => {
   const user = await getCurrentUser();
 
+  if (!user) {
+    redirect("/sign-in");
+  }
+
   if (!user.mustChangePassword) {
     redirect("/dashboard");
   }

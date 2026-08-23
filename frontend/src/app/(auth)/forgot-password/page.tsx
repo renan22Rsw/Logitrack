@@ -1,7 +1,15 @@
+import { getCurrentUser } from "@/lib/api/users/get-user";
 import { ForgotPasswordForm } from "./_components/forget-password-form";
 import { Package } from "lucide-react";
+import { redirect } from "next/navigation";
 
-const ForgotPassword = () => {
+const ForgotPassword = async () => {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <div className="space-y-4">

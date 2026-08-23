@@ -16,7 +16,7 @@ export const fetchApi = async <T>(
           cookie: cookieStore.toString(),
         },
 
-        ...options,
+        ...options?.headers,
       },
     );
 

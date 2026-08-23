@@ -1,7 +1,13 @@
 import { User, UsersByPage } from "@/types/user";
 import { fetchApi } from "../api";
 
-export const getCurrentUser = (): Promise<User> => fetchApi<User>("/users/me");
+export const getCurrentUser = async (): Promise<User | null> => {
+  try {
+    return await fetchApi<User>("/users/me");
+  } catch {
+    return null;
+  }
+};
 
 export const getAllUsers = (): Promise<User[]> =>
   fetchApi<User[]>("/admin/users");
