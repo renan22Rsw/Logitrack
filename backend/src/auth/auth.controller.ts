@@ -97,7 +97,18 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  logout(@Response({ passthrough: true }) res: FastifyReply) {
+  async logout(
+    @Request() req: FastifyRequest,
+    @Response({ passthrough: true }) res: FastifyReply,
+  ) {
+    const refreshToken = req.cookies['refresh_token'];
+
+    if (refreshToken) {
+      await this.authService.logout(refreshToken, req.user);
+    }
+
     res.clearCookie('access_token').clearCookie('refresh_token');
+
+    return { message: 'logged out' };
   }
 }
