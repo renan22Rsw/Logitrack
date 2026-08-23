@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AuditLogs } from "@/types/audit-logs";
@@ -40,7 +41,14 @@ export const AuditLogList = ({
                     </Avatar>
                     <CardTitle>{auditLog.user.name}</CardTitle>
                   </div>
-                  {auditLogsRoles(auditLog.user.role)}
+
+                  {auditLog.user.isDemo ? (
+                    <Badge className="bg-purple-200 text-purple-600">
+                      Guest
+                    </Badge>
+                  ) : (
+                    auditLogsRoles(auditLog.user.role)
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -72,7 +80,12 @@ export const AuditLogList = ({
                   </Avatar>
                   <CardTitle>{auditLog.user.name}</CardTitle>
                 </div>
-                {auditLogsRoles(auditLog.user.role)}
+
+                {auditLog.user.isDemo ? (
+                  <Badge className="bg-purple-200 text-purple-600">Guest</Badge>
+                ) : (
+                  auditLogsRoles(auditLog.user.role)
+                )}
               </div>
 
               <div className="space-y-2">

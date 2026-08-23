@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Role, User as UserTypes } from "@/types/user";
-import { LucideIcon, Package, User, Users } from "lucide-react";
+import { LucideIcon, Package, User, Users, ShieldUser } from "lucide-react";
 
 interface ProfileAccessItem {
   role: Role;
@@ -13,9 +13,16 @@ interface ProfileAccessItem {
 }
 
 export const UserProfileAccessAside = ({ users }: { users: UserTypes[] }) => {
-  const adminUsers = users.filter((user) => user.role === "ADMIN").length;
-  const managerUsers = users.filter((user) => user.role === "MANAGER").length;
-  const operatorUser = users.filter((user) => user.role === "OPERATOR").length;
+  const noDemoUser = users.filter((user) => user.isDemo === false);
+
+  const adminUsers = noDemoUser.filter((user) => user.role === "ADMIN").length;
+
+  const managerUsers = noDemoUser.filter(
+    (user) => user.role === "MANAGER",
+  ).length;
+  const operatorUsers = noDemoUser.filter(
+    (user) => user.role === "OPERATOR",
+  ).length;
 
   const PROFILE_ACCESS: ProfileAccessItem[] = [
     {
@@ -42,10 +49,20 @@ export const UserProfileAccessAside = ({ users }: { users: UserTypes[] }) => {
       label: "Operador",
       role: "OPERATOR",
       description: "Opera movimentações e consulta",
-      quantity: operatorUser,
+      quantity: operatorUsers,
       icon: User,
       color: "#35A75D",
       bgColor: "#DCFCE7",
+    },
+
+    {
+      label: "Convidado",
+      role: "OPERATOR",
+      description: "Usuáriio de demonstração",
+      quantity: 1,
+      icon: ShieldUser,
+      color: "#9333ea",
+      bgColor: "#e9d5ff",
     },
   ];
 
@@ -68,7 +85,7 @@ export const UserProfileAccessAside = ({ users }: { users: UserTypes[] }) => {
             />
             <div className="w-full">
               <div className="flex items-center justify-between gap-2">
-                <h6 className="text-sm font-semibold">{item.role}</h6>
+                <h6 className="text-sm font-semibold">{item.label}</h6>
                 <p className="text-xs font-semibold">
                   {countUsers(item.quantity)}
                 </p>

@@ -23,6 +23,7 @@ import {
 } from "@/utils/audit-logs";
 import { AuditLogs, AuditLogsByPage } from "@/types/audit-logs";
 import { formatDate } from "@/utils/format-date";
+import { Badge } from "@/components/ui/badge";
 
 interface AuditLogsTableProps {
   page: AuditLogsByPage;
@@ -67,7 +68,14 @@ export const AuditLogTable = ({
                       </AvatarFallback>
                     </Avatar>
                     {auditLog.user.name}
-                    {auditLogsRoles(auditLog.user.role)}
+
+                    {auditLog.user.isDemo ? (
+                      <Badge className="bg-purple-200 text-purple-600">
+                        Guest
+                      </Badge>
+                    ) : (
+                      auditLogsRoles(auditLog.user.role)
+                    )}
                   </TableCell>
                   <TableCell>{auditLogsActions(auditLog.action)}</TableCell>
 
@@ -91,7 +99,14 @@ export const AuditLogTable = ({
                       </AvatarFallback>
                     </Avatar>
                     {auditLog.user.name}
-                    {auditLogsRoles(auditLog.user.role)}
+
+                    {auditLog.user.isDemo ? (
+                      <Badge className="bg-purple-200 text-purple-600">
+                        Guest
+                      </Badge>
+                    ) : (
+                      auditLogsRoles(auditLog.user.role)
+                    )}
                   </TableCell>
                   <TableCell>{auditLogsActions(auditLog.action)}</TableCell>
 

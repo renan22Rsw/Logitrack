@@ -16,6 +16,7 @@ import { DeleteUserButton } from "./delete-button";
 import { EditUserButton } from "./edit-button";
 import { User, UsersByPage } from "@/types/user";
 import { usersRoles } from "@/utils/users.table";
+import { formatDate } from "@/utils/format-date";
 
 interface UsersTableProps {
   page: UsersByPage;
@@ -42,7 +43,7 @@ export const UsersTable = ({
               <TableHead>E-mail</TableHead>
               <TableHead>Perfil</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Acesso</TableHead>
+              <TableHead>Criado</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -59,10 +60,26 @@ export const UsersTable = ({
                     </Avatar>
                     {user.name}
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.email}
-                  </TableCell>
-                  <TableCell>{usersRoles(user.role)}</TableCell>
+                  {user.isDemo ? (
+                    <TableCell className="text-muted-foreground">
+                      guest email
+                    </TableCell>
+                  ) : (
+                    <TableCell className="text-muted-foreground">
+                      {user.email}
+                    </TableCell>
+                  )}
+                  {user.isDemo ? (
+                    <TableCell>
+                      {
+                        <Badge className="bg-purple-200 text-purple-600">
+                          Guest
+                        </Badge>
+                      }
+                    </TableCell>
+                  ) : (
+                    <TableCell>{usersRoles(user.role)}</TableCell>
+                  )}
                   <TableCell>
                     <Badge
                       className={cn(
@@ -76,7 +93,7 @@ export const UsersTable = ({
                   </TableCell>
 
                   <TableCell className="text-muted-foreground font-semibold">
-                    teste
+                    {formatDate(user.createdAt)}
                   </TableCell>
 
                   <TableCell className="flex items-center gap-4">
@@ -102,10 +119,29 @@ export const UsersTable = ({
                     </Avatar>
                     {user.name}
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.email}
-                  </TableCell>
-                  <TableCell>{usersRoles(user.role)}</TableCell>
+
+                  {user.isDemo ? (
+                    <TableCell className="text-muted-foreground">
+                      guest email
+                    </TableCell>
+                  ) : (
+                    <TableCell className="text-muted-foreground">
+                      {user.email}
+                    </TableCell>
+                  )}
+
+                  {user.isDemo ? (
+                    <TableCell>
+                      {
+                        <Badge className="bg-purple-200 text-purple-600">
+                          Guest
+                        </Badge>
+                      }
+                    </TableCell>
+                  ) : (
+                    <TableCell>{usersRoles(user.role)}</TableCell>
+                  )}
+
                   <TableCell>
                     <Badge
                       className={cn(
@@ -119,7 +155,7 @@ export const UsersTable = ({
                   </TableCell>
 
                   <TableCell className="text-muted-foreground font-semibold">
-                    teste
+                    {formatDate(user.createdAt)}
                   </TableCell>
 
                   <TableCell className="flex items-center gap-4">

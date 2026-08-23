@@ -40,9 +40,16 @@ interface ProfileFormProps {
   email: string;
   role: Role;
   about: string;
+  isDemo: boolean;
 }
 
-export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
+export const ProfileForm = ({
+  name,
+  email,
+  role,
+  about,
+  isDemo,
+}: ProfileFormProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -73,6 +80,10 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
 
       if (!response.ok) {
         throw new Error("Error ao alterar a senha do usuário");
+      }
+
+      if (response.status === 403) {
+        throw new Error("Contas de demonstração não podem ser alteradas.");
       }
 
       toast.success("Dados alterados com sucesso", {
@@ -116,6 +127,7 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
                     aria-invalid={field.errors !== null}
                     placeholder="John Doe"
                     autoComplete="off"
+                    disabled={isDemo}
                   />
                   {field.errors && (
                     <FieldError
@@ -138,11 +150,12 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
                   <Input
                     {...field.props}
                     id="form-formisch-email"
-                    value={field.input ?? ""}
+                    value={isDemo ? "email" : field.input}
                     aria-invalid={field.errors !== null}
                     placeholder="K0ZqI@example.com"
                     autoComplete="off"
                     type="email"
+                    disabled={isDemo}
                   />
                   {field.errors && (
                     <FieldError
@@ -164,7 +177,7 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
                   </FieldLabel>
 
                   <Select
-                    value={field.input}
+                    value={isDemo ? "Guest" : field.input}
                     onValueChange={(value: Role) => field.onChange(value)}
                     disabled={!hasPermission}
                   >
@@ -212,6 +225,7 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
                       autoComplete="off"
                       rows={6}
                       className="resize-none"
+                      disabled={isDemo}
                     />
                     {field.errors && (
                       <FieldError
@@ -226,7 +240,7 @@ export const ProfileForm = ({ name, email, role, about }: ProfileFormProps) => {
         </CardContent>
 
         <CardFooter className="flex justify-end border-none bg-white">
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || isDemo}>
             {isLoading ? (
               <>
                 <Spinner />

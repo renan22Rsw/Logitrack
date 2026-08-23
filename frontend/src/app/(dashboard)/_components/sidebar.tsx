@@ -75,9 +75,10 @@ const adminNavItems = [
 interface AppSideBarProps {
   name: string;
   email: string;
+  isDemo: boolean;
 }
 
-export const AppSidebar = ({ name, email }: AppSideBarProps) => {
+export const AppSidebar = ({ name, email, isDemo }: AppSideBarProps) => {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -174,9 +175,13 @@ export const AppSidebar = ({ name, email }: AppSideBarProps) => {
               <span className="text-sidebar-foreground text-sm font-medium">
                 {name}
               </span>
-              <span className="text-sidebar-foreground/60 text-xs">
-                {email}
-              </span>
+              {isDemo ? (
+                ""
+              ) : (
+                <span className="text-sidebar-foreground/60 text-xs">
+                  {email}
+                </span>
+              )}
             </div>
             <ChevronRight className="text-sidebar-foreground/60 size-4" />
           </div>

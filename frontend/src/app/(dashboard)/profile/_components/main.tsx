@@ -5,6 +5,7 @@ import { SecuritySection } from "./section";
 import { User } from "@/types/user";
 import { usersRoles } from "@/utils/users.table";
 import { formatDate } from "@/utils/format-date";
+import { Badge } from "@/components/ui/badge";
 
 interface ProfileMainProps {
   user: User;
@@ -27,13 +28,25 @@ export const ProfileMain = ({ user }: ProfileMainProps) => {
         <div className="text-center">
           <h2 className="text-2xl font-bold">{user.name}</h2>
 
-          <p className="text-muted-foreground">{user.email}</p>
+          {user.isDemo ? (
+            ""
+          ) : (
+            <p className="text-muted-foreground">{user.email}</p>
+          )}
 
-          {usersRoles(user.role)}
+          {user.isDemo ? (
+            <Badge className="bg-purple-200 text-purple-600">Guest</Badge>
+          ) : (
+            <>{usersRoles(user.role)}</>
+          )}
 
-          <p className="text-muted-foreground mt-2 text-sm">
-            {formatDate(user.createdAt)}
-          </p>
+          {user.isDemo ? (
+            ""
+          ) : (
+            <p className="text-muted-foreground mt-2 text-sm">
+              {formatDate(user.createdAt)}
+            </p>
+          )}
         </div>
       </CardContent>
 
@@ -43,8 +56,9 @@ export const ProfileMain = ({ user }: ProfileMainProps) => {
           email={user.email}
           role={user.role}
           about={user.about as string}
+          isDemo={user.isDemo as boolean}
         />
-        <SecuritySection />
+        <SecuritySection isDemo={user.isDemo as boolean} />
 
         <Card>
           <CardHeader>

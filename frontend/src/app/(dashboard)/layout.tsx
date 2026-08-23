@@ -13,6 +13,10 @@ export default async function DashBoardLayout({
 }>) {
   const user = await getCurrentUser();
 
+  if (!user) {
+    redirect("/sign-in");
+  }
+
   if (user.mustChangePassword) {
     redirect("/reset-password");
   }
@@ -24,6 +28,7 @@ export default async function DashBoardLayout({
           <AppSidebar
             name={user?.name as string}
             email={user?.email as string}
+            isDemo={user.isDemo as boolean}
           />
 
           <main className="w-full bg-[#F8F9F9]">

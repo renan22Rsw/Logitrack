@@ -40,7 +40,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export const PasswordForm = () => {
+interface PasswordForm {
+  isDemo: boolean;
+}
+
+export const PasswordForm = ({ isDemo }: PasswordForm) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -103,7 +107,7 @@ export const PasswordForm = () => {
         </div>
 
         <Dialog>
-          <DialogTrigger asChild>
+          <DialogTrigger asChild disabled={isDemo}>
             <Button>Alterar Senha</Button>
           </DialogTrigger>
 

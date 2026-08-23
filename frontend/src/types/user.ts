@@ -11,7 +11,7 @@ export interface User {
   mustChangePassword: boolean;
   createdAt: Date;
   deletedAt: Date;
-
+  isDemo?: boolean;
   movements?: StockMovements[];
   auditLogs?: AuditLogs[];
 }

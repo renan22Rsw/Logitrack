@@ -7,7 +7,11 @@ import {
 } from "@/components/ui/card";
 import { PasswordForm } from "./password-form";
 
-export const SecuritySection = () => {
+interface SecuritySectionProps {
+  isDemo: boolean;
+}
+
+export const SecuritySection = ({ isDemo }: SecuritySectionProps) => {
   return (
     <Card>
       <CardHeader>
@@ -16,7 +20,7 @@ export const SecuritySection = () => {
       </CardHeader>
 
       <CardContent>
-        <PasswordForm />
+        <PasswordForm isDemo={isDemo} />
       </CardContent>
     </Card>
   );

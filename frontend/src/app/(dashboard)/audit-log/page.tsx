@@ -27,14 +27,14 @@ const AuditLog = async ({ searchParams }: AuditLogsProps) => {
     role ?? "",
   );
 
+  const auditLogsSearch = search ? await getSearchAuditLogs(search) : auditLogs;
+
   const auditLogsPage = await getAuditLogsByPage(
     page || 1,
     action ?? "",
     entity ?? "",
     role ?? "",
   );
-
-  const auditLogsSearch = await getSearchAuditLogs(search);
 
   return (
     <>
