@@ -42,6 +42,7 @@ export const ForgotPasswordForm = () => {
   });
 
   const handleSubmit: SubmitHandler<typeof emailSchema> = async (output) => {
+    setServerSuccess(null);
     setServerError(null);
 
     try {
@@ -58,12 +59,10 @@ export const ForgotPasswordForm = () => {
 
       const data = await response.json();
 
-      setServerSuccess(data.message);
-
       if (!response.ok) {
         setServerError(data.message ?? "Ocorreu um erro. Tente novamente.");
       }
-
+      setServerSuccess(data.message);
       router.refresh();
     } catch (err) {
       setServerError("Não foi possível conectar ao servidor. Tente novamente.");

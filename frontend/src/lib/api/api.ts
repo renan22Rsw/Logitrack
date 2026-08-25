@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const fetchApi = async <T>(
   path: string,
@@ -14,11 +15,14 @@ export const fetchApi = async <T>(
         headers: {
           "Content-Type": "application/json",
           cookie: cookieStore.toString(),
+          ...options?.headers,
         },
-
-        ...options?.headers,
       },
     );
+
+    if (response.status === 401) {
+      redirect("/sign-in");
+    }
 
     if (!response.ok) {
       throw new Error(`Erro na requisição: ${response.status}`);

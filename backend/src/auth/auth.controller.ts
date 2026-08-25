@@ -86,8 +86,8 @@ export class AuthController {
     return this.authService.forgotPassowrd(user);
   }
 
-  @Post('reset-password')
   @UseGuards(JwtAuthGuard)
+  @Post('reset-password')
   async resetPassword(
     @Request() req: FastifyRequest,
     @Body(new ValidationPipe()) user: ResetPasswordDto,

@@ -235,6 +235,11 @@ describe('AuthService', () => {
       });
       jwtService.sign.mockReturnValue('new-access-token');
 
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'user-1',
+        deletedAt: null,
+      });
+
       const result = await service.refresh('valid-token');
 
       expect(result).toEqual({ acess_token: 'new-access-token' });
@@ -242,6 +247,30 @@ describe('AuthService', () => {
         { sub: 'user-1', email: 'user@test.com', role: 'ADMIN' },
         { expiresIn: '15m' },
       );
+    });
+
+    it('should throw UnauthorizedException and delete the token if user is deactivated', async () => {
+      prisma.refreshToken.findUnique.mockResolvedValue({
+        id: 'token-1',
+        expiresAt: new Date(Date.now() + 10000),
+      });
+      jwtService.verify.mockReturnValue({
+        sub: 'user-1',
+        email: 'user@test.com',
+        role: 'ADMIN',
+      });
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'user-1',
+        deletedAt: new Date(),
+      });
+      prisma.refreshToken.delete.mockResolvedValue({});
+
+      await expect(service.refresh('valid-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(prisma.refreshToken.delete).toHaveBeenCalledWith({
+        where: { id: 'token-1' },
+      });
     });
   });
 

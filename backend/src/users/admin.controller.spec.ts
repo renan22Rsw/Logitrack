@@ -4,7 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AdminController } from './admin.controller';
 import { UsersService as AdminService } from './users.service';
 import { Role } from '@prisma/client';
-
+import { mockRequest } from '../../test/mock-request';
+import { AuthService } from '@/auth/auth.service';
 describe('AdminController', () => {
   let controller: AdminController;
   let service: any;
@@ -20,6 +21,13 @@ describe('AdminController', () => {
             createUserByAdmin: jest.fn(),
             updateUserByAdmin: jest.fn(),
             deleteUser: jest.fn(),
+          },
+        },
+
+        {
+          provide: AuthService,
+          useValue: {
+            logout: jest.fn(),
           },
         },
       ],
@@ -106,14 +114,15 @@ describe('AdminController', () => {
 
   describe('deleteUser', () => {
     it('should call service with the id param', async () => {
+      const req = mockRequest('admin-1');
       const deletedUser = { id: 'user-1', deletedAt: new Date() };
 
       service.deleteUser.mockResolvedValue(deletedUser);
 
-      const result = await controller.deleteUser('user-1');
+      const result = await controller.deleteUser('user-1', req);
 
       expect(result).toEqual(deletedUser);
-      expect(service.deleteUser).toHaveBeenCalledWith('user-1');
+      expect(service.deleteUser).toHaveBeenCalledWith('user-1', 'admin-1');
     });
   });
 });

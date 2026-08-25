@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,6 +21,7 @@ import { UpdateUserByAdminDto } from '@/users/dto/update-user.dto';
 
 import { Role } from '@prisma/client';
 import { PaginatedUsers } from '@/types/user';
+import type { FastifyRequest } from 'fastify';
 
 @Controller('admin/users')
 export class AdminController {
@@ -61,7 +63,10 @@ export class AdminController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  async deleteUser(@Param('id') id: string): Promise<Omit<User, 'password'>> {
-    return this.adminService.deleteUser(id);
+  async deleteUser(
+    @Param('id') id: string,
+    @Request() req: FastifyRequest,
+  ): Promise<Omit<User, 'password'>> {
+    return this.adminService.deleteUser(id, req.user.sub);
   }
 }

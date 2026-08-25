@@ -46,11 +46,6 @@ const mainNavItems = [
     icon: ArrowLeftRight,
     href: "/stock-movements",
   },
-  {
-    title: "Relatórios",
-    icon: FileText,
-    href: "/reports",
-  },
 ];
 
 const adminNavItems = [

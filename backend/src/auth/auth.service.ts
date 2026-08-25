@@ -121,6 +121,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user || user.deletedAt) {
+      await this.prisma.refreshToken.delete({ where: { id: storedToken.id } });
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
     const newAcessToken = this.jwtService.sign(
       {
         sub: payload.sub,
@@ -141,6 +150,10 @@ export class AuthService {
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
+
+    if (existingUser?.deletedAt) {
+      throw new UnauthorizedException('Conta do usuário está inativa');
+    }
 
     if (existingUser) {
       const temporaryPassword = randomBytes(12).toString('hex');

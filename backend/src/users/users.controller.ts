@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Request,
+  Response,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -14,11 +15,16 @@ import { UsersService } from './users.service';
 import { User } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
-import type { FastifyRequest } from 'fastify';
+import type { FastifyRequest, FastifyReply } from 'fastify';
+
+import { AuthService } from '@/auth/auth.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
@@ -48,7 +54,18 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   async deleteUser(
     @Request() req: FastifyRequest,
+    @Response({ passthrough: true }) res: FastifyReply,
   ): Promise<Omit<User, 'password'>> {
-    return this.usersService.deleteUser(req.user.sub);
+    const refreshToken = req.cookies['refresh_token'];
+
+    const user = await this.usersService.deleteUser(req.user.sub, req.user.sub);
+
+    if (refreshToken) {
+      await this.authService.logout(refreshToken, req.user);
+    }
+
+    res.clearCookie('access_token').clearCookie('refresh_token');
+
+    return user;
   }
 }

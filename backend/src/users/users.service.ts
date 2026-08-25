@@ -328,7 +328,10 @@ export class UsersService {
     });
   }
 
-  async deleteUser(id: string): Promise<Omit<User, 'password'>> {
+  async deleteUser(
+    id: string,
+    actorId: string,
+  ): Promise<Omit<User, 'password'>> {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user) throw new NotFoundException('User not found');
@@ -337,21 +340,27 @@ export class UsersService {
       throw new ForbiddenException('Demo account cannot be deleted');
     }
 
-    await this.prisma.auditLog.create({
-      data: {
-        userId: user.id,
-        action: AuditAction.DELETE,
-        entity: AuditEntity.USER,
-        entityId: user.id,
-        description: `Usuário ${user.name} deletou seu perfil`,
-      },
-    });
+    const isSelfDelete = actorId === id;
 
-    return this.prisma.user.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      await tx.refreshToken.deleteMany({ where: { userId: id } });
+
+      await tx.auditLog.create({
+        data: {
+          userId: actorId,
+          action: AuditAction.DELETE,
+          entity: AuditEntity.USER,
+          entityId: user.id,
+          description: isSelfDelete
+            ? `Usuário ${user.name} deletou seu próprio perfil`
+            : `Usuário ${user.name} foi deletado por um administrador`,
+        },
+      });
+
+      return tx.user.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
     });
   }
 }

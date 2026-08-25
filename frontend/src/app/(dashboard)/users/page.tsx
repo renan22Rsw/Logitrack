@@ -9,6 +9,7 @@ import {
 } from "@/lib/api/users/get-user";
 import { CreateUsersButton } from "./_components/create-users-button";
 import { getAllAuditLogs } from "@/lib/api/audit-logs/get-audit-logs";
+import { redirect } from "next/navigation";
 
 interface UsersProps {
   searchParams: {
@@ -25,6 +26,10 @@ const Users = async ({ searchParams }: UsersProps) => {
   const usersSearch = search ? await getSearchUsers(search) : users;
   const usersPage = await getUsersByPage(page || 1);
   const auditLogs = await getAllAuditLogs();
+
+  if (!currentUser) {
+    redirect("/sign-in");
+  }
 
   return (
     <>

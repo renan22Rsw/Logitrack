@@ -31,6 +31,10 @@ describe('UsersService', () => {
     auditLog: {
       create: jest.fn(),
     },
+
+    refreshToken: {
+      deleteMany: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -434,37 +438,64 @@ describe('UsersService', () => {
     it('should throw NotFoundException if user was not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.deleteUser('inexistente')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.deleteUser('inexistente', 'inexistente'),
+      ).rejects.toThrow(NotFoundException);
 
-      expect(prisma.auditLog.create).not.toHaveBeenCalled();
-      expect(prisma.user.update).not.toHaveBeenCalled();
+      expect(txMock.auditLog.create).not.toHaveBeenCalled();
+      expect(txMock.user.update).not.toHaveBeenCalled();
     });
 
-    it('should create a log and soft-delete the user', async () => {
+    it('should create a log and soft-delete the user on self-delete', async () => {
       const user = { id: 'user-1', name: 'User 1' };
       const deletedUser = { ...user, deletedAt: new Date() };
 
       prisma.user.findUnique.mockResolvedValue(user);
-      prisma.auditLog.create.mockResolvedValue({});
-      prisma.user.update.mockResolvedValue(deletedUser);
+      txMock.refreshToken.deleteMany.mockResolvedValue({});
+      txMock.auditLog.create.mockResolvedValue({});
+      txMock.user.update.mockResolvedValue(deletedUser);
 
-      const result = await service.deleteUser('user-1');
+      const result = await service.deleteUser('user-1', 'user-1');
 
       expect(result).toEqual(deletedUser);
-      expect(prisma.auditLog.create).toHaveBeenCalledWith({
+      expect(txMock.refreshToken.deleteMany).toHaveBeenCalledWith({
+        where: { userId: 'user-1' },
+      });
+      expect(txMock.auditLog.create).toHaveBeenCalledWith({
         data: {
-          userId: user.id,
+          userId: 'user-1', // actorId
           action: 'DELETE',
           entity: 'USER',
           entityId: user.id,
-          description: `Usuário ${user.name} deletou seu perfil`,
+          description: `Usuário ${user.name} deletou seu próprio perfil`,
         },
       });
-      expect(prisma.user.update).toHaveBeenCalledWith({
+      expect(txMock.user.update).toHaveBeenCalledWith({
         where: { id: 'user-1' },
         data: { deletedAt: expect.any(Date) },
+      });
+    });
+
+    it('should create a log with admin description when actor differs from target', async () => {
+      const user = { id: 'user-1', name: 'User 1' };
+      const deletedUser = { ...user, deletedAt: new Date() };
+
+      prisma.user.findUnique.mockResolvedValue(user);
+      txMock.refreshToken.deleteMany.mockResolvedValue({});
+      txMock.auditLog.create.mockResolvedValue({});
+      txMock.user.update.mockResolvedValue(deletedUser);
+
+      const result = await service.deleteUser('user-1', 'admin-1');
+
+      expect(result).toEqual(deletedUser);
+      expect(txMock.auditLog.create).toHaveBeenCalledWith({
+        data: {
+          userId: 'admin-1', // actorId, não o target
+          action: 'DELETE',
+          entity: 'USER',
+          entityId: user.id,
+          description: `Usuário ${user.name} foi deletado por um administrador`,
+        },
       });
     });
 
@@ -473,12 +504,12 @@ describe('UsersService', () => {
 
       prisma.user.findUnique.mockResolvedValue(demoUser);
 
-      await expect(service.deleteUser('user-1')).rejects.toThrow(
+      await expect(service.deleteUser('user-1', 'user-1')).rejects.toThrow(
         ForbiddenException,
       );
 
-      expect(prisma.auditLog.create).not.toHaveBeenCalled();
-      expect(prisma.user.update).not.toHaveBeenCalled();
+      expect(txMock.auditLog.create).not.toHaveBeenCalled();
+      expect(txMock.user.update).not.toHaveBeenCalled();
     });
   });
 });

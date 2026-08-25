@@ -9,6 +9,7 @@ import {
 } from "@/lib/api/products/get-products";
 import { CreateProductButton } from "./_components/create-product-button";
 import { getCurrentUser } from "@/lib/api/users/get-user";
+import { redirect } from "next/navigation";
 
 interface ProductsProps {
   searchParams: {
@@ -25,6 +26,10 @@ const Products = async ({ searchParams }: ProductsProps) => {
 
   const productsPage = await getProductsByPage(page || 1);
   const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
 
   return (
     <>

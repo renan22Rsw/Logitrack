@@ -10,6 +10,7 @@ import { mapStockMovementsCards } from "@/adapters/stock-movements";
 import { CreateStockMovementsButton } from "./_components/create-stock-movements-button";
 import { getProducts } from "@/lib/api/products/get-products";
 import { getCurrentUser } from "@/lib/api/users/get-user";
+import { redirect } from "next/navigation";
 
 interface StockMovementsProps {
   searchParams: {
@@ -31,6 +32,10 @@ const StockMovements = async ({ searchParams }: StockMovementsProps) => {
   const products = await getProducts();
 
   const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/sign-in");
+  }
 
   return (
     <>

@@ -1,18 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import type { FastifyRequest } from 'fastify';
+import { mockRequest } from '../../test/mock-request';
+import { AuthService } from '@/auth/auth.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let service: any;
-
-  const mockRequest = (userId: string) =>
-    ({
-      user: { sub: userId },
-    }) as unknown as FastifyRequest;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,6 +22,13 @@ describe('UsersController', () => {
             createUser: jest.fn(),
             updateUser: jest.fn(),
             deleteUser: jest.fn(),
+          },
+        },
+
+        {
+          provide: AuthService,
+          useValue: {
+            logout: jest.fn(),
           },
         },
       ],
@@ -89,16 +93,24 @@ describe('UsersController', () => {
   });
 
   describe('deleteUser', () => {
-    it('should call service with the id from req.user.sub', async () => {
-      const req = mockRequest('user-1');
+    it('should call service with the id from req.user.sub and clear cookies', async () => {
+      const req = mockRequest('user-1', {
+        refresh_token: 'fake-refresh-token',
+      });
       const deletedUser = { id: 'user-1', deletedAt: new Date() };
+
+      const res = {
+        clearCookie: jest.fn().mockReturnThis(),
+      } as any;
 
       service.deleteUser.mockResolvedValue(deletedUser);
 
-      const result = await controller.deleteUser(req);
+      const result = await controller.deleteUser(req, res);
 
       expect(result).toEqual(deletedUser);
-      expect(service.deleteUser).toHaveBeenCalledWith('user-1');
+      expect(service.deleteUser).toHaveBeenCalledWith('user-1', 'user-1');
+      expect(res.clearCookie).toHaveBeenCalledWith('access_token');
+      expect(res.clearCookie).toHaveBeenCalledWith('refresh_token');
     });
   });
 });
