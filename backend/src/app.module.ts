@@ -7,6 +7,7 @@ import { ProductsModule } from './products/products.module';
 import { StockMovementsModule } from './stock-movements/stock-movements.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
 import { MailModule } from './mail/mail.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MailModule } from './mail/mail.module';
     StockMovementsModule,
     AuditLogsModule,
     MailModule,
+    HealthModule,
   ],
   providers: [DatabaseService],
 })
