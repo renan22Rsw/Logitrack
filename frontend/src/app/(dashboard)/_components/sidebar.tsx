@@ -61,9 +61,9 @@ const adminNavItems = [
   },
 
   {
-    title: "Audit log",
+    title: "Registros",
     icon: ClipboardList,
-    href: "/audit-log",
+    href: "/audit-logs",
   },
 ];
 
@@ -94,7 +94,7 @@ export const AppSidebar = ({ name, email, isDemo }: AppSideBarProps) => {
           </div>
           <div className="flex flex-col">
             <span className="text-sidebar-foreground text-base font-semibold">
-              LogiTrack
+              Logitrack
             </span>
             <span className="text-sidebar-foreground/60 text-xs">
               Gestão de Logística

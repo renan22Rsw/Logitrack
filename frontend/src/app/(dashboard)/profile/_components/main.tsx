@@ -6,12 +6,14 @@ import { User } from "@/types/user";
 import { usersRoles } from "@/utils/users.table";
 import { formatDate } from "@/utils/format-date";
 import { Badge } from "@/components/ui/badge";
+import { AuditLogs } from "@/types/audit-logs";
 
 interface ProfileMainProps {
   user: User;
+  lastAcess: AuditLogs[];
 }
 
-export const ProfileMain = ({ user }: ProfileMainProps) => {
+export const ProfileMain = ({ user, lastAcess }: ProfileMainProps) => {
   const createdProducts = user.auditLogs?.filter(
     (products) => products.entity === "PRODUCT" && products.action === "CREATE",
   );
@@ -78,8 +80,9 @@ export const ProfileMain = ({ user }: ProfileMainProps) => {
 
             <div>
               <p className="text-muted-foreground text-sm">Último acesso</p>
-              <p className="text-2xl font-bold">Hoje</p>{" "}
-              {/* Será colocado com novo serviço de audit lgos */}
+              <p className="text-2xl font-bold">
+                {formatDate(lastAcess[0].createdAt)}
+              </p>
             </div>
           </CardContent>
         </Card>

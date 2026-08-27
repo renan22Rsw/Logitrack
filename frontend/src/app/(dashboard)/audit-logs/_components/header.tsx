@@ -46,7 +46,7 @@ export const AuditLogHeader = ({
 
   return (
     <header className="px-6 py-8">
-      <h1 className="text-xl font-bold xl:text-2xl">Audit Log</h1>
+      <h1 className="text-xl font-bold xl:text-2xl">Registros</h1>
       <p className="text-muted-foreground">
         Acompanhe todas as ações do seu sistema
       </p>
