@@ -10,6 +10,7 @@ import {
 import { CreateProductButton } from "./_components/create-product-button";
 import { getCurrentUser } from "@/lib/api/users/get-user";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
 interface ProductsProps {
   searchParams: {
@@ -17,6 +18,10 @@ interface ProductsProps {
     page: number;
   };
 }
+
+export const metadata: Metadata = {
+  title: "Produtos",
+};
 
 const Products = async ({ searchParams }: ProductsProps) => {
   const { page, search } = await searchParams;

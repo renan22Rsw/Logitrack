@@ -1,6 +1,11 @@
+import { Metadata } from "next";
 import { AuthCard } from "../_components/auth-card";
 import { AuthContainer } from "../_components/auth-container";
 import { SignUpForm } from "./_components/sign-up-form";
+
+export const metadata: Metadata = {
+  title: "Criar Conta",
+};
 
 const SignUp = () => {
   return (

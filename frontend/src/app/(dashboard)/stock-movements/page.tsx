@@ -11,6 +11,7 @@ import { CreateStockMovementsButton } from "./_components/create-stock-movements
 import { getProducts } from "@/lib/api/products/get-products";
 import { getCurrentUser } from "@/lib/api/users/get-user";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
 interface StockMovementsProps {
   searchParams: {
@@ -18,6 +19,10 @@ interface StockMovementsProps {
     page: number;
   };
 }
+
+export const metadata: Metadata = {
+  title: "Movimentações",
+};
 
 const StockMovements = async ({ searchParams }: StockMovementsProps) => {
   const { search, page } = await searchParams;

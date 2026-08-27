@@ -1,7 +1,12 @@
+import { Metadata } from "next";
 import { AuthCard } from "../_components/auth-card";
 import { AuthContainer } from "../_components/auth-container";
 import { GuestSignInButton } from "./_components/guest-signIn-button";
 import { SignInForm } from "./_components/sign-in-form";
+
+export const metadata: Metadata = {
+  title: "Entrar",
+};
 
 const SignIn = () => {
   return (

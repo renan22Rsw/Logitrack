@@ -10,6 +10,7 @@ import {
 import { CreateUsersButton } from "./_components/create-users-button";
 import { getAllAuditLogs } from "@/lib/api/audit-logs/get-audit-logs";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
 interface UsersProps {
   searchParams: {
@@ -17,6 +18,10 @@ interface UsersProps {
     page: number;
   };
 }
+
+export const metadata: Metadata = {
+  title: "Usuários",
+};
 
 const Users = async ({ searchParams }: UsersProps) => {
   const { search, page } = await searchParams;

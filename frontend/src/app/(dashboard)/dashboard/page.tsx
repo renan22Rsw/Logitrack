@@ -3,6 +3,11 @@ import { DashboardHeader } from "../_components/header";
 import { DashBoardMain } from "../_components/section";
 import { mapProductsCards } from "@/adapters/products";
 import { getStockMovements } from "@/lib/api/stock-movements/get-stock-movements";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 const DashBoard = async () => {
   const products = await getProducts();
