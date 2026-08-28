@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppSidebar } from "./_components/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
